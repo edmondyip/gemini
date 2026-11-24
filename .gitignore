@@ -1,0 +1,15 @@
+# Commercial pro assets (NEVER commit to public repo)
+pro-pack/
+
+# Dependencies & build output
+node_modules/
+dist/
+dist-ssr/
+*.tsbuildinfo
+
+# Local & environment files
+*.local
+.env
+.env.*
+.DS_Store
+.vercel/
