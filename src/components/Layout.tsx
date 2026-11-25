@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { STATUS } from '../data/status';
+import { trackEvent } from '../utils/analytics';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -124,6 +125,9 @@ export function Layout({ children }: LayoutProps) {
               href={STATUS.supportUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() =>
+                trackEvent('click_support_pass', { location: 'footer' })
+              }
               className="hover:text-[#1C1917] transition-colors whitespace-nowrap shrink-0"
             >
               Back Gemini ($1+)

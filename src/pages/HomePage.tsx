@@ -7,6 +7,7 @@ import {
   renderDitherToCanvas,
 } from '../engine/ditherEngine';
 import { renderProceduralScene } from '../engine/scenes';
+import { trackEvent } from '../utils/analytics';
 
 const QUICK_PALETTES: Array<{ id: PaletteId; label: string }> = [
   { id: 'ink', label: '1-Bit Ink' },
@@ -120,6 +121,12 @@ export function HomePage() {
                   href={STATUS.buyLinks.ditherGumroad}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() =>
+                    trackEvent('click_pro_pack', {
+                      platform: 'gumroad',
+                      location: 'home',
+                    })
+                  }
                   className="inline-flex items-center justify-center bg-white border border-[#DED9CE] hover:border-[#A8A29E] text-[#1C1917] px-4 py-2.5 rounded-[3px] text-sm font-medium transition-colors whitespace-nowrap shrink-0"
                 >
                   Pro Pack — Gumroad ($7)
@@ -128,6 +135,12 @@ export function HomePage() {
                   href={STATUS.buyLinks.ditherItch}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() =>
+                    trackEvent('click_pro_pack', {
+                      platform: 'itch',
+                      location: 'home',
+                    })
+                  }
                   className="inline-flex items-center justify-center bg-white border border-[#DED9CE] hover:border-[#A8A29E] text-[#1C1917] px-4 py-2.5 rounded-[3px] text-sm font-medium transition-colors whitespace-nowrap shrink-0"
                 >
                   itch.io ($7)
@@ -138,6 +151,9 @@ export function HomePage() {
                   href={STATUS.supportUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() =>
+                    trackEvent('click_support_pass', { location: 'home' })
+                  }
                   className="inline-block text-sm text-[#57534E] hover:text-[#1C1917] underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
                 >
                   Support Run ($1+)

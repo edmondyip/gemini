@@ -16,6 +16,7 @@ import {
   generateCssFilterSnippet,
   generateGodotPreviewLines,
 } from '../engine/shaderGen';
+import { trackEvent } from '../utils/analytics';
 
 export function DitherLabPage() {
   const [params, setParams] = useState<DitherParams>(DEFAULT_DITHER_PARAMS);
@@ -158,6 +159,10 @@ export function DitherLabPage() {
     a.href = url;
     a.download = `dither-lab-${params.algorithm}.png`;
     a.click();
+    trackEvent('dither_download_png', {
+      algorithm: params.algorithm,
+      palette: params.paletteId,
+    });
   };
 
   const handleCopyCss = async () => {
@@ -177,6 +182,7 @@ export function DitherLabPage() {
       setCopiedCss(true);
       window.setTimeout(() => setCopiedCss(false), 2000);
     }
+    trackEvent('dither_copy_css');
   };
 
   const godotPreviewLines = generateGodotPreviewLines(params);
@@ -720,6 +726,12 @@ export function DitherLabPage() {
                   href={STATUS.buyLinks.ditherGumroad}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() =>
+                    trackEvent('click_pro_pack', {
+                      platform: 'gumroad',
+                      location: 'dither_lab',
+                    })
+                  }
                   className="flex-1 inline-flex items-center justify-center bg-[#15803D] hover:bg-[#166534] text-white px-3 py-2 rounded-[3px] text-sm font-medium transition-colors whitespace-nowrap shrink-0"
                 >
                   Pro Pack — Gumroad ($7)
@@ -728,6 +740,12 @@ export function DitherLabPage() {
                   href={STATUS.buyLinks.ditherItch}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() =>
+                    trackEvent('click_pro_pack', {
+                      platform: 'itch',
+                      location: 'dither_lab',
+                    })
+                  }
                   className="flex-1 inline-flex items-center justify-center bg-white border border-[#DED9CE] hover:border-[#A8A29E] text-[#1C1917] px-3 py-2 rounded-[3px] text-sm font-medium transition-colors whitespace-nowrap shrink-0"
                 >
                   itch.io ($7)
@@ -739,6 +757,11 @@ export function DitherLabPage() {
                   href={STATUS.supportUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() =>
+                    trackEvent('click_support_pass', {
+                      location: 'dither_lab',
+                    })
+                  }
                   className="inline-block text-sm text-[#57534E] hover:text-[#1C1917] underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
                 >
                   Support Run ($1+)
