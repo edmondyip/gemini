@@ -34,6 +34,7 @@ export function NeonRainPage() {
   const [rainEnabled, setRainEnabled] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(false);
   const [isSkillModalOpen, setIsSkillModalOpen] = useState(false);
+  const [uiHidden, setUiHidden] = useState(false);
 
   useEffect(() => {
     const prevTitle = document.title;
@@ -61,10 +62,28 @@ export function NeonRainPage() {
   }, []);
 
   useEffect(() => {
-    if (!isSkillModalOpen) return;
     const onKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.tagName === 'SELECT')
+      ) {
+        return;
+      }
+
       if (e.key === 'Escape') {
-        setIsSkillModalOpen(false);
+        if (isSkillModalOpen) {
+          setIsSkillModalOpen(false);
+        } else {
+          setUiHidden((prev) => !prev);
+        }
+        return;
+      }
+
+      if ((e.key === 'h' || e.key === 'H') && !isSkillModalOpen) {
+        setUiHidden((prev) => !prev);
       }
     };
     window.addEventListener('keydown', onKeyDown);
@@ -114,123 +133,145 @@ export function NeonRainPage() {
       />
 
       {/* Top HUD Bar */}
-      <header className="pointer-events-none absolute top-0 left-0 right-0 z-20 p-3 sm:p-5 flex flex-wrap items-start justify-between gap-3">
-        {/* Top-Left Floating Pill */}
-        <div className="pointer-events-auto flex flex-wrap items-center gap-x-3 gap-y-1 bg-[#0a0f1d]/75 backdrop-blur-md border border-white/15 rounded-[4px] px-3 py-2 font-mono text-xs text-slate-200 shadow-lg">
-          <Link
-            to="/"
-            className="text-emerald-400 hover:text-emerald-300 font-medium transition-colors whitespace-nowrap shrink-0"
-          >
-            ← Hub
-          </Link>
-          <span className="text-white/25 hidden sm:inline">|</span>
-          <span className="font-semibold tracking-wide text-white whitespace-nowrap shrink-0">
-            NEON RAIN · HONG KONG
-          </span>
-          <span className="text-white/25 hidden md:inline">|</span>
-          <span className="text-slate-300 tabular-nums hidden md:inline whitespace-nowrap shrink-0">
-            22.3193° N 114.1694° E
-          </span>
-          <span className="text-white/25 hidden lg:inline">|</span>
-          <span className="text-slate-400 hidden lg:inline whitespace-nowrap shrink-0">
-            Zero 3D Models · Pure Three.js
-          </span>
-        </div>
+      {!uiHidden && (
+        <header className="pointer-events-none absolute top-0 left-0 right-0 z-20 p-3 sm:p-5 flex flex-wrap items-start justify-between gap-3">
+          {/* Top-Left Floating Pill */}
+          <div className="pointer-events-auto flex flex-wrap items-center gap-x-3 gap-y-1 bg-[#0a0f1d]/75 backdrop-blur-md border border-white/15 rounded-[4px] px-3 py-2 font-mono text-xs text-slate-200 shadow-lg">
+            <Link
+              to="/"
+              className="text-emerald-400 hover:text-emerald-300 font-medium transition-colors whitespace-nowrap shrink-0"
+            >
+              ← Hub
+            </Link>
+            <span className="text-white/25 hidden sm:inline">|</span>
+            <span className="font-semibold tracking-wide text-white whitespace-nowrap shrink-0">
+              NEON RAIN · HONG KONG
+            </span>
+            <span className="text-white/25 hidden md:inline">|</span>
+            <span className="text-slate-300 tabular-nums hidden md:inline whitespace-nowrap shrink-0">
+              22.3193° N 114.1694° E
+            </span>
+            <span className="text-white/25 hidden lg:inline">|</span>
+            <span className="text-slate-400 hidden lg:inline whitespace-nowrap shrink-0">
+              Zero 3D Models · Pure Three.js
+            </span>
+          </div>
 
-        {/* Top-Right Primary CTA */}
-        <button
-          type="button"
-          onClick={handleOpenSkillModal}
-          className="pointer-events-auto bg-[#15803D] hover:bg-[#166534] text-white font-medium text-xs sm:text-sm px-3.5 py-2 rounded-[4px] border border-emerald-400/30 shadow-lg transition-colors cursor-pointer whitespace-nowrap shrink-0"
-        >
-          AI Skill · Preview
-        </button>
-      </header>
+          {/* Top-Right Primary CTA */}
+          <button
+            type="button"
+            onClick={handleOpenSkillModal}
+            className="pointer-events-auto bg-[#15803D] hover:bg-[#166534] text-white font-medium text-xs sm:text-sm px-3.5 py-2 rounded-[4px] border border-emerald-400/30 shadow-lg transition-colors cursor-pointer whitespace-nowrap shrink-0"
+          >
+            AI Skill · Preview
+          </button>
+        </header>
+      )}
 
       {/* Bottom Compact Control Dock */}
-      <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-20 p-3 sm:p-5 flex justify-center">
-        <div className="pointer-events-auto w-fit max-w-[calc(100vw-1.5rem)] bg-[#0a0f1d]/82 backdrop-blur-md border border-white/15 rounded-[6px] px-3 py-2 shadow-2xl flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
-          {/* Camera Presets */}
-          <div className="flex flex-wrap items-center justify-center gap-1.5">
-            <span className="font-mono text-[11px] uppercase tracking-wider text-slate-400 mr-1 whitespace-nowrap shrink-0">
-              Cam
-            </span>
-            {CAMERA_OPTIONS.map((cam) => {
-              const active = cameraPreset === cam.id;
-              return (
-                <button
-                  key={cam.id}
-                  type="button"
-                  onClick={() => handleCameraChange(cam.id)}
-                  className={`font-mono text-xs px-2.5 py-1 rounded-[3px] border transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
-                    active
-                      ? 'bg-[#15803D] text-white border-[#15803D]'
-                      : 'bg-white/5 text-slate-200 border-white/10 hover:border-white/30'
-                  }`}
-                >
-                  {cam.label}
-                </button>
-              );
-            })}
-          </div>
+      {!uiHidden && (
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-20 p-3 sm:p-5 flex justify-center">
+          <div className="pointer-events-auto w-fit max-w-[calc(100vw-1.5rem)] bg-[#0a0f1d]/82 backdrop-blur-md border border-white/15 rounded-[6px] px-3 py-2 shadow-2xl flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
+            {/* Camera Presets */}
+            <div className="flex flex-wrap items-center justify-center gap-1.5">
+              <span className="font-mono text-[11px] uppercase tracking-wider text-slate-400 mr-1 whitespace-nowrap shrink-0">
+                Cam
+              </span>
+              {CAMERA_OPTIONS.map((cam) => {
+                const active = cameraPreset === cam.id;
+                return (
+                  <button
+                    key={cam.id}
+                    type="button"
+                    onClick={() => handleCameraChange(cam.id)}
+                    className={`font-mono text-xs px-2.5 py-1 rounded-[3px] border transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
+                      active
+                        ? 'bg-[#15803D] text-white border-[#15803D]'
+                        : 'bg-white/5 text-slate-200 border-white/10 hover:border-white/30'
+                    }`}
+                  >
+                    {cam.label}
+                  </button>
+                );
+              })}
+            </div>
 
-          <div className="hidden xl:block h-4 w-px bg-white/15 shrink-0" />
+            <div className="hidden xl:block h-4 w-px bg-white/15 shrink-0" />
 
-          {/* Look Presets */}
-          <div className="flex flex-wrap items-center justify-center gap-1.5">
-            <span className="font-mono text-[11px] uppercase tracking-wider text-slate-400 mr-1 whitespace-nowrap shrink-0">
-              Look
-            </span>
-            {LOOK_OPTIONS.map((look) => {
-              const active = lookPreset === look.id;
-              return (
-                <button
-                  key={look.id}
-                  type="button"
-                  onClick={() => handleLookChange(look.id)}
-                  className={`font-mono text-xs px-2.5 py-1 rounded-[3px] border transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
-                    active
-                      ? 'bg-cyan-500/20 text-cyan-200 border-cyan-400/60'
-                      : 'bg-white/5 text-slate-200 border-white/10 hover:border-white/30'
-                  }`}
-                >
-                  {look.label}
-                </button>
-              );
-            })}
-          </div>
+            {/* Look Presets */}
+            <div className="flex flex-wrap items-center justify-center gap-1.5">
+              <span className="font-mono text-[11px] uppercase tracking-wider text-slate-400 mr-1 whitespace-nowrap shrink-0">
+                Look
+              </span>
+              {LOOK_OPTIONS.map((look) => {
+                const active = lookPreset === look.id;
+                return (
+                  <button
+                    key={look.id}
+                    type="button"
+                    onClick={() => handleLookChange(look.id)}
+                    className={`font-mono text-xs px-2.5 py-1 rounded-[3px] border transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
+                      active
+                        ? 'bg-cyan-500/20 text-cyan-200 border-cyan-400/60'
+                        : 'bg-white/5 text-slate-200 border-white/10 hover:border-white/30'
+                    }`}
+                  >
+                    {look.label}
+                  </button>
+                );
+              })}
+            </div>
 
-          <div className="hidden xl:block h-4 w-px bg-white/15 shrink-0" />
+            <div className="hidden xl:block h-4 w-px bg-white/15 shrink-0" />
 
-          {/* Rain & Sound Toggles */}
-          <div className="flex flex-wrap items-center justify-center gap-1.5 shrink-0">
-            <button
-              type="button"
-              onClick={handleToggleRain}
-              aria-pressed={rainEnabled}
-              className={`font-mono text-xs px-2.5 py-1 rounded-[3px] border transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
-                rainEnabled
-                  ? 'bg-sky-500/20 text-sky-200 border-sky-400/60'
-                  : 'bg-white/5 text-slate-400 border-white/10 hover:border-white/30'
-              }`}
-            >
-              Rain: {rainEnabled ? 'ON' : 'OFF'}
-            </button>
-            <button
-              type="button"
-              onClick={handleToggleSound}
-              aria-pressed={soundEnabled}
-              className={`font-mono text-xs px-2.5 py-1 rounded-[3px] border transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
-                soundEnabled
-                  ? 'bg-emerald-500/25 text-emerald-200 border-emerald-400/60'
-                  : 'bg-white/5 text-slate-300 border-white/10 hover:border-white/30'
-              }`}
-            >
-              Sound: {soundEnabled ? 'ON' : 'OFF'}
-            </button>
+            {/* Rain, Sound & Recording Mode Toggles */}
+            <div className="flex flex-wrap items-center justify-center gap-1.5 shrink-0">
+              <button
+                type="button"
+                onClick={handleToggleRain}
+                aria-pressed={rainEnabled}
+                className={`font-mono text-xs px-2.5 py-1 rounded-[3px] border transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
+                  rainEnabled
+                    ? 'bg-sky-500/20 text-sky-200 border-sky-400/60'
+                    : 'bg-white/5 text-slate-400 border-white/10 hover:border-white/30'
+                }`}
+              >
+                Rain: {rainEnabled ? 'ON' : 'OFF'}
+              </button>
+              <button
+                type="button"
+                onClick={handleToggleSound}
+                aria-pressed={soundEnabled}
+                className={`font-mono text-xs px-2.5 py-1 rounded-[3px] border transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
+                  soundEnabled
+                    ? 'bg-emerald-500/25 text-emerald-200 border-emerald-400/60'
+                    : 'bg-white/5 text-slate-300 border-white/10 hover:border-white/30'
+                }`}
+              >
+                Sound: {soundEnabled ? 'ON' : 'OFF'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setUiHidden(true)}
+                className="font-mono text-xs px-2.5 py-1 rounded-[3px] border bg-white/5 text-slate-300 border-white/15 hover:border-white/35 hover:text-white transition-colors cursor-pointer whitespace-nowrap shrink-0"
+              >
+                Hide UI (H)
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* Clean Recording Mode Subtle Restore Pill */}
+      {uiHidden && (
+        <button
+          type="button"
+          onClick={() => setUiHidden(false)}
+          className="fixed bottom-4 right-4 z-30 bg-[#0a0f1d]/70 backdrop-blur-md border border-white/15 rounded-[4px] px-2.5 py-1.5 font-mono text-[11px] text-slate-200 opacity-20 hover:opacity-100 focus:opacity-100 transition-opacity cursor-pointer whitespace-nowrap"
+        >
+          Show UI (H)
+        </button>
+      )}
 
       {/* Editorial AI Skill Preview Modal */}
       {isSkillModalOpen && (

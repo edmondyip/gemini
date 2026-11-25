@@ -523,15 +523,73 @@ function createNeonSignTexture(
 }
 
 function createHaloSpriteTexture(tracker: ResourceTracker): THREE.CanvasTexture {
-  const { canvas, ctx } = makeCanvas(128, 128);
-  const grad = ctx.createRadialGradient(64, 64, 2, 64, 64, 62);
-  grad.addColorStop(0.0, 'rgba(255, 240, 210, 0.95)');
-  grad.addColorStop(0.25, 'rgba(255, 195, 115, 0.5)');
-  grad.addColorStop(0.6, 'rgba(255, 160, 80, 0.12)');
-  grad.addColorStop(1.0, 'rgba(255, 150, 60, 0)');
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, 128, 128);
+  const size = 128;
+  const { canvas, ctx } = makeCanvas(size, size);
+  const img = ctx.createImageData(size, size);
+  const data = img.data;
+  const half = size * 0.5;
+  const maxR = half - 2;
 
+  for (let py = 0; py < size; py++) {
+    for (let px = 0; px < size; px++) {
+      const r = Math.hypot(px - half, py - half) / maxR;
+      const idx = (py * size + px) * 4;
+      if (r >= 1) {
+        data[idx + 0] = 0;
+        data[idx + 1] = 0;
+        data[idx + 2] = 0;
+        data[idx + 3] = 0;
+      } else {
+        const falloff = Math.pow(1.0 - r, 3.2);
+        data[idx + 0] = 255;
+        data[idx + 1] = 226;
+        data[idx + 2] = 178;
+        data[idx + 3] = Math.round(falloff * 255);
+      }
+    }
+  }
+
+  ctx.putImageData(img, 0, 0);
+  const tex = tracker.tex(new THREE.CanvasTexture(canvas));
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+function createNeonReflectionTexture(
+  tracker: ResourceTracker,
+  r: number,
+  g: number,
+  b: number
+): THREE.CanvasTexture {
+  const size = 256;
+  const { canvas, ctx } = makeCanvas(size, size);
+  const img = ctx.createImageData(size, size);
+  const data = img.data;
+  const half = size * 0.5;
+
+  for (let py = 0; py < size; py++) {
+    const streak = 0.82 + 0.18 * Math.sin(py * 0.45);
+    const dy = (py - half) / half;
+    for (let px = 0; px < size; px++) {
+      const dx = (px - half) / half;
+      const dist = Math.hypot(dx, dy);
+      const idx = (py * size + px) * 4;
+      if (dist >= 1) {
+        data[idx + 0] = 0;
+        data[idx + 1] = 0;
+        data[idx + 2] = 0;
+        data[idx + 3] = 0;
+      } else {
+        const falloff = Math.pow(Math.max(0, 1.0 - dist), 2.5) * streak;
+        data[idx + 0] = r;
+        data[idx + 1] = g;
+        data[idx + 2] = b;
+        data[idx + 3] = Math.round(falloff * 255);
+      }
+    }
+  }
+
+  ctx.putImageData(img, 0, 0);
   const tex = tracker.tex(new THREE.CanvasTexture(canvas));
   tex.colorSpace = THREE.SRGBColorSpace;
   return tex;
@@ -1464,20 +1522,28 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
   }
   addRooftopDetails(bldgC, 10.1, 5.6, 12.6, true, true);
 
-  // --- Building D: East-Side Cross-Street Facade (x in [9.5, 11.8], z in [-9.5, 0.3]) ---
+  // --- Building D: Compact 2-Story East Corner Shophouse (x in [9.5, 11.8], z in [-10.6, -1.6]) ---
   const bldgD = new THREE.Group();
-  bldgD.position.set(10.65, 0.3, -4.6); // 2.3 x 9.8
+  bldgD.position.set(10.65, 0.3, -6.1); // 2.3 x 4.6 x 9.0
   scene.add(bldgD);
 
   const bldgDBody = new THREE.Mesh(
-    tracker.geo(new THREE.BoxGeometry(2.3, 9.0, 9.8)),
+    tracker.geo(new THREE.BoxGeometry(2.3, 4.6, 9.0)),
     facadeAMat
   );
-  bldgDBody.position.y = 4.5;
+  bldgDBody.position.y = 2.3;
   bldgDBody.castShadow = true;
   bldgDBody.receiveShadow = true;
   bldgD.add(bldgDBody);
 
+  const bldgDLedge = new THREE.Mesh(
+    tracker.geo(new THREE.BoxGeometry(2.46, 0.13, 9.16)),
+    concreteTrimMat
+  );
+  bldgDLedge.position.y = 2.4;
+  bldgD.add(bldgDLedge);
+
+  // West face ground-floor storefront (麵家)
   const noodleTex = createShopfrontTexture(tracker, '麵家', '#00e5ff', '#b96928');
   const noodleMat = tracker.mat(
     new THREE.MeshStandardMaterial({
@@ -1493,28 +1559,54 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
     noodleMat
   );
   shopD.rotation.y = -Math.PI / 2;
-  shopD.position.set(-1.16, 1.1, 1.5);
+  shopD.position.set(-1.16, 1.1, 1.4);
   bldgD.add(shopD);
 
-  addCorrugatedAwning(bldgD, -1.55, 2.25, 1.5, 4.6, 0.85, -Math.PI / 2);
+  addCorrugatedAwning(bldgD, -1.55, 2.25, 1.4, 4.6, 0.85, -Math.PI / 2);
 
-  for (let floor = 0; floor < 3; floor++) {
-    const wy = 3.35 + floor * 2.0;
-    for (let col = 0; col < 4; col++) {
-      const wz = -3.2 + col * 2.1;
-      addWindowAssembly(
-        bldgD,
-        -1.15,
-        wy,
-        wz,
-        -Math.PI / 2,
-        floor * 4 + col + 1,
-        (floor + col) % 2 === 0,
-        col % 2 === 1
-      );
-    }
+  // Camera-facing South corner storefront (茶記) + awning
+  const cornerShopTex = createShopfrontTexture(
+    tracker,
+    '茶記',
+    '#ffb020',
+    '#c46a24'
+  );
+  const cornerShopMat = tracker.mat(
+    new THREE.MeshStandardMaterial({
+      map: cornerShopTex,
+      emissive: new THREE.Color(0xffb454),
+      emissiveMap: cornerShopTex,
+      emissiveIntensity: 1.25,
+      roughness: 0.24,
+    })
+  );
+  const shopDSouth = new THREE.Mesh(
+    tracker.geo(new THREE.PlaneGeometry(1.9, 1.95)),
+    cornerShopMat
+  );
+  shopDSouth.position.set(0, 1.1, 4.51);
+  bldgD.add(shopDSouth);
+  addCorrugatedAwning(bldgD, 0, 2.25, 4.92, 2.35, 0.82, 0);
+
+  // 2nd-story windows on West, South, and East faces (no blank walls)
+  for (let col = 0; col < 4; col++) {
+    const wz = -3.2 + col * 2.1;
+    addWindowAssembly(
+      bldgD,
+      -1.15,
+      3.35,
+      wz,
+      -Math.PI / 2,
+      col + 1,
+      col % 2 === 0,
+      col % 2 === 1
+    );
   }
-  addRooftopDetails(bldgD, 2.3, 9.8, 9.0, false, false);
+  addWindowAssembly(bldgD, 0, 3.35, 4.5, 0, 0, true, false);
+  for (const wz of [-2.2, 0.4, 2.8]) {
+    addWindowAssembly(bldgD, 1.15, 3.35, wz, Math.PI / 2, 1, false, true);
+  }
+  addRooftopDetails(bldgD, 2.3, 9.0, 4.6, false, false);
 
   // ---------------------------------------------------------------------------
   // 4. Iconic Cantilevered Hong Kong Neon Signs (13 Signs)
@@ -1671,15 +1763,15 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
       rotY: 0,
       flicker: true,
     },
-    // 11. 麻雀 jade/crimson sign jutting west from Building D
+    // 11. 麻雀 jade/crimson sign jutting west from Building D (unobstructed sightline)
     {
       text: '麻雀',
       color: '#22ff88',
       borderColor: '#ff3344',
       vertical: true,
-      size: [1.05, 2.45],
-      anchor: [9.5, 5.2, -2.0],
-      offset: [-1.45, 0, 0],
+      size: [1.1, 2.3],
+      anchor: [9.5, 3.6, -2.5],
+      offset: [-1.55, 0, 0],
       rotY: 0,
     },
     // 12. 龍鳳 amber/magenta sign jutting west from Building D
@@ -1689,8 +1781,8 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
       borderColor: '#ff2a85',
       vertical: false,
       size: [2.1, 0.95],
-      anchor: [9.5, 7.6, -5.2],
-      offset: [-1.35, 0, 0],
+      anchor: [9.5, 3.9, -6.2],
+      offset: [-1.45, 0, 0],
       rotY: 0,
     },
     // 13. 點心 high skyline sign on Building C
@@ -1828,17 +1920,64 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
     const spriteMat = tracker.mat(
       new THREE.SpriteMaterial({
         map: haloTex,
-        color: 0xffcc88,
+        color: 0xffd69e,
         transparent: true,
-        opacity: 0.75,
+        opacity: 0.35,
         blending: THREE.AdditiveBlending,
         depthWrite: false,
       })
     );
     const halo = new THREE.Sprite(spriteMat);
     halo.position.copy(bulb.position);
-    halo.scale.set(2.1, 2.1, 1);
+    halo.scale.set(2.4, 2.4, 1);
     scene.add(halo);
+  }
+
+  // Wet Asphalt Additive Neon Reflection Pools
+  interface NeonReflection {
+    material: THREE.MeshBasicMaterial;
+    baseOpacity: number;
+    phase: number;
+  }
+  const neonReflections: NeonReflection[] = [];
+  const reflectionSpecs: Array<{
+    rgb: [number, number, number];
+    pos: [number, number];
+    size: [number, number];
+    opacity: number;
+  }> = [
+    { rgb: [255, 42, 133], pos: [-1.8, 3.1], size: [3.8, 5.4], opacity: 0.24 }, // 冰室 magenta
+    { rgb: [0, 229, 255], pos: [-3.8, 3.6], size: [3.0, 5.4], opacity: 0.22 }, // 霓虹 cyan
+    { rgb: [255, 72, 64], pos: [2.2, 3.4], size: [4.0, 5.6], opacity: 0.24 }, // 大押 crimson-amber
+    { rgb: [255, 176, 32], pos: [-6.8, 3.8], size: [3.4, 5.2], opacity: 0.22 }, // 酒樓 amber
+    { rgb: [34, 255, 136], pos: [-5.0, 2.7], size: [2.5, 4.2], opacity: 0.2 }, // 藥房 jade
+    { rgb: [255, 168, 72], pos: [-0.3, 2.2], size: [4.2, 3.2], opacity: 0.2 }, // 冰室 warm spill
+    { rgb: [255, 64, 150], pos: [4.8, -1.6], size: [3.4, 4.8], opacity: 0.19 }, // Cross street bounce
+  ];
+
+  const reflGeo = tracker.geo(new THREE.PlaneGeometry(1, 1));
+  for (let i = 0; i < reflectionSpecs.length; i++) {
+    const spec = reflectionSpecs[i];
+    const reflTex = createNeonReflectionTexture(tracker, ...spec.rgb);
+    const reflMat = tracker.mat(
+      new THREE.MeshBasicMaterial({
+        map: reflTex,
+        transparent: true,
+        opacity: spec.opacity,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      })
+    );
+    const reflMesh = new THREE.Mesh(reflGeo, reflMat);
+    reflMesh.rotation.x = -Math.PI / 2;
+    reflMesh.position.set(spec.pos[0], 0.026, spec.pos[1]);
+    reflMesh.scale.set(spec.size[0], spec.size[1], 1);
+    scene.add(reflMesh);
+    neonReflections.push({
+      material: reflMat,
+      baseOpacity: spec.opacity,
+      phase: i * 1.7,
+    });
   }
 
   // Two subtle warm streetlamp PointLights for warm pavement pools
@@ -2113,10 +2252,21 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
   const RAIN_COUNT = 760;
   const rainPositions = new Float32Array(RAIN_COUNT * 6);
   const rainSeeds = new Float32Array(RAIN_COUNT);
+
+  const sampleRainXZ = (): [number, number] => {
+    let rx = (Math.random() - 0.5) * 24;
+    let rz = (Math.random() - 0.5) * 24;
+    // Thin streaks directly in front of main 大押 / 冰室 / 霓虹 typography
+    if (rx > -4.6 && rx < 2.8 && rz > 0.2 && rz < 6.4 && Math.random() < 0.72) {
+      rx = (Math.random() - 0.5) * 24;
+      rz = (Math.random() - 0.5) * 24;
+    }
+    return [rx, rz];
+  };
+
   for (let i = 0; i < RAIN_COUNT; i++) {
-    const rx = (Math.random() - 0.5) * 24;
+    const [rx, rz] = sampleRainXZ();
     const ry = Math.random() * 17;
-    const rz = (Math.random() - 0.5) * 24;
     rainPositions[i * 6 + 0] = rx;
     rainPositions[i * 6 + 1] = ry;
     rainPositions[i * 6 + 2] = rz;
@@ -2130,9 +2280,9 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
   rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPositions, 3));
   const rainMat = tracker.mat(
     new THREE.LineBasicMaterial({
-      color: 0xaad4ff,
+      color: 0xb8d4ff,
       transparent: true,
-      opacity: 0.38,
+      opacity: 0.24,
       depthWrite: false,
     })
   );
@@ -2294,7 +2444,10 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
         Math.floor(RAIN_COUNT * (rainIntensity > 1.2 ? 1.0 : 0.62))
       );
       rainGeo.setDrawRange(0, activeCount * 2);
-      rainMat.opacity = Math.min(0.55, 0.34 * rainIntensity);
+      rainMat.opacity = Math.min(
+        0.3,
+        0.24 * (rainIntensity > 1.2 ? 1.25 : 1.0)
+      );
 
       const posAttr = rainGeo.getAttribute('position') as THREE.BufferAttribute;
       for (let i = 0; i < activeCount; i++) {
@@ -2305,8 +2458,9 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
 
         if (y0 < 0.05) {
           y0 = 16.5 + Math.random() * 1.5;
-          x0 = (Math.random() - 0.5) * 24;
-          z0 = (Math.random() - 0.5) * 24;
+          const [rx, rz] = sampleRainXZ();
+          x0 = rx;
+          z0 = rz;
         }
         rainPositions[i * 6 + 0] = x0;
         rainPositions[i * 6 + 1] = y0;
@@ -2316,6 +2470,14 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
         rainPositions[i * 6 + 5] = z0 - slant * streakLen * 0.6;
       }
       posAttr.needsUpdate = true;
+    }
+
+    // Subtle shimmer on wet asphalt neon reflection pools
+    for (const refl of neonReflections) {
+      const shimmer = rainEnabled
+        ? 0.93 + 0.07 * Math.sin(elapsed * 2.2 + refl.phase)
+        : 0.78;
+      refl.material.opacity = refl.baseOpacity * shimmer;
     }
 
     for (const r of ripples) {
