@@ -107,7 +107,7 @@ export function Layout({ children }: LayoutProps) {
               Updated {STATUS.lastUpdated}
             </span>
           </div>
-          <nav className="flex items-center gap-5">
+          <nav className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <Link
               to="/"
               className="hover:text-[#1C1917] transition-colors whitespace-nowrap shrink-0"
@@ -120,6 +120,22 @@ export function Layout({ children }: LayoutProps) {
             >
               Dither &amp; CRT Lab
             </Link>
+            <a
+              href={STATUS.supportUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-[#1C1917] transition-colors whitespace-nowrap shrink-0"
+            >
+              Back Gemini ($1+)
+            </a>
+            <a
+              href={STATUS.rivalUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-[#1C1917] transition-colors whitespace-nowrap shrink-0"
+            >
+              Also in this 30-day run: ChatGPT Lab
+            </a>
           </nav>
         </div>
       </footer>

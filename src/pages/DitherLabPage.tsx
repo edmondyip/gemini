@@ -715,22 +715,33 @@ export function DitherLabPage() {
                 Full Godot 4 + Three.js Shaders + 4x Upscale Offline App — $7
               </p>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="flex flex-wrap gap-2">
                 <a
                   href={STATUS.buyLinks.ditherGumroad}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center bg-[#15803D] hover:bg-[#166534] text-white px-3 py-2 rounded-[3px] text-sm font-medium transition-colors whitespace-nowrap shrink-0"
+                  className="flex-1 inline-flex items-center justify-center bg-[#15803D] hover:bg-[#166534] text-white px-3 py-2 rounded-[3px] text-sm font-medium transition-colors whitespace-nowrap shrink-0"
                 >
-                  Gumroad ($7)
+                  Pro Pack — Gumroad ($7)
                 </a>
                 <a
                   href={STATUS.buyLinks.ditherItch}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center bg-white border border-[#DED9CE] hover:border-[#A8A29E] text-[#1C1917] px-3 py-2 rounded-[3px] text-sm font-medium transition-colors whitespace-nowrap shrink-0"
+                  className="flex-1 inline-flex items-center justify-center bg-white border border-[#DED9CE] hover:border-[#A8A29E] text-[#1C1917] px-3 py-2 rounded-[3px] text-sm font-medium transition-colors whitespace-nowrap shrink-0"
                 >
                   itch.io ($7)
+                </a>
+              </div>
+
+              <div>
+                <a
+                  href={STATUS.supportUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block text-sm text-[#57534E] hover:text-[#1C1917] underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
+                >
+                  Support Run ($1+)
                 </a>
               </div>
             </div>

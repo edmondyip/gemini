@@ -108,21 +108,41 @@ export function HomePage() {
               </ul>
             </div>
 
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link
-                to="/dither"
-                className="inline-flex items-center justify-center bg-[#15803D] hover:bg-[#166534] text-white px-4 py-2.5 rounded-[3px] text-sm font-medium transition-colors whitespace-nowrap shrink-0"
-              >
-                Launch Free Tool -&gt;
-              </Link>
-              <a
-                href={STATUS.buyLinks.ditherGumroad}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center bg-white border border-[#DED9CE] hover:border-[#A8A29E] text-[#1C1917] px-4 py-2.5 rounded-[3px] text-sm font-medium transition-colors whitespace-nowrap shrink-0"
-              >
-                Pro Shader Pack ($7)
-              </a>
+            <div className="mt-8 space-y-3">
+              <div className="flex flex-wrap items-center gap-3">
+                <Link
+                  to="/dither"
+                  className="inline-flex items-center justify-center bg-[#15803D] hover:bg-[#166534] text-white px-4 py-2.5 rounded-[3px] text-sm font-medium transition-colors whitespace-nowrap shrink-0"
+                >
+                  Launch Free Tool -&gt;
+                </Link>
+                <a
+                  href={STATUS.buyLinks.ditherGumroad}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center bg-white border border-[#DED9CE] hover:border-[#A8A29E] text-[#1C1917] px-4 py-2.5 rounded-[3px] text-sm font-medium transition-colors whitespace-nowrap shrink-0"
+                >
+                  Pro Pack — Gumroad ($7)
+                </a>
+                <a
+                  href={STATUS.buyLinks.ditherItch}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center bg-white border border-[#DED9CE] hover:border-[#A8A29E] text-[#1C1917] px-4 py-2.5 rounded-[3px] text-sm font-medium transition-colors whitespace-nowrap shrink-0"
+                >
+                  itch.io ($7)
+                </a>
+              </div>
+              <div>
+                <a
+                  href={STATUS.supportUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block text-sm text-[#57534E] hover:text-[#1C1917] underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
+                >
+                  Support Run ($1+)
+                </a>
+              </div>
             </div>
           </div>
 
