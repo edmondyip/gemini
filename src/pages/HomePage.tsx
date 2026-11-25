@@ -34,6 +34,7 @@ const UPCOMING_RELEASES = [
 export function HomePage() {
   const [activePalette, setActivePalette] = useState<PaletteId>('ink');
   const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const neonPreviewCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const latestLog = [...LOGS].sort((a, b) => b.day - a.day)[0];
 
   const sourceScene = useMemo(() => {
@@ -56,6 +57,137 @@ export function HomePage() {
     });
   }, [sourceScene, activePalette]);
 
+  useEffect(() => {
+    const canvas = neonPreviewCanvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const w = canvas.width;
+    const h = canvas.height;
+
+    // Deep midnight indigo sky
+    const sky = ctx.createLinearGradient(0, 0, 0, h);
+    sky.addColorStop(0, '#070b14');
+    sky.addColorStop(0.68, '#0c1324');
+    sky.addColorStop(1, '#090d18');
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, w, h);
+
+    // Subtle HK tenement silhouettes
+    ctx.fillStyle = '#131a29';
+    ctx.fillRect(42, 34, 155, 178);
+    ctx.fillRect(190, 56, 130, 156);
+    ctx.fillRect(352, 44, 88, 168);
+
+    // Warm apartment window grid
+    const winColors = ['#ffd485', '#7fd4ff', '#ffaa55', '#1d2536'];
+    for (let row = 0; row < 4; row++) {
+      for (let col = 0; col < 5; col++) {
+        ctx.fillStyle = winColors[(row * 3 + col) % winColors.length];
+        ctx.fillRect(58 + col * 27, 48 + row * 34, 14, 18);
+      }
+    }
+    for (let row = 0; row < 3; row++) {
+      for (let col = 0; col < 4; col++) {
+        ctx.fillStyle = winColors[(row + col * 2) % winColors.length];
+        ctx.fillRect(206 + col * 28, 70 + row * 34, 14, 18);
+      }
+    }
+
+    // Glowing ground-floor Cha Chaan Teng (冰室) storefront
+    ctx.fillStyle = '#ffa844';
+    ctx.fillRect(52, 172, 138, 38);
+    ctx.fillStyle = '#243442';
+    ctx.fillRect(46, 162, 150, 10);
+
+    // Wet street surface
+    ctx.fillStyle = '#101522';
+    ctx.fillRect(0, 212, w, h - 212);
+
+    // Helper for crisp glowing HK neon signs + wet street reflections
+    const drawNeon = (
+      x: number,
+      y: number,
+      sw: number,
+      sh: number,
+      text: string,
+      color: string,
+      vertical: boolean
+    ) => {
+      ctx.save();
+      ctx.fillStyle = '#070a12';
+      ctx.fillRect(x, y, sw, sh);
+      ctx.strokeStyle = color;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 14;
+      ctx.lineWidth = 2.5;
+      ctx.strokeRect(x, y, sw, sh);
+
+      ctx.fillStyle = color;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      if (vertical) {
+        const chars = Array.from(text);
+        ctx.font = 'bold 20px sans-serif';
+        chars.forEach((ch, idx) => {
+          ctx.fillText(ch, x + sw / 2, y + 22 + idx * 28);
+        });
+      } else {
+        ctx.font = 'bold 20px sans-serif';
+        ctx.fillText(text, x + sw / 2, y + sh / 2 + 1);
+      }
+
+      // Wet asphalt reflection streak below
+      const refGrad = ctx.createLinearGradient(0, 214, 0, h);
+      refGrad.addColorStop(0, `${color}66`);
+      refGrad.addColorStop(1, `${color}00`);
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = refGrad;
+      ctx.fillRect(x + 4, 216, Math.max(18, sw - 8), 72);
+      ctx.restore();
+    };
+
+    drawNeon(112, 84, 78, 36, '冰室', '#ff2a85', false);
+    drawNeon(220, 44, 42, 74, '大押', '#ff3344', true);
+    drawNeon(290, 74, 42, 74, '霓虹', '#00e5ff', true);
+    drawNeon(360, 106, 66, 32, '夜市', '#ffb020', false);
+
+    // Stylized red HK taxi silhouette with headlights
+    ctx.fillStyle = '#b91c1c';
+    ctx.fillRect(156, 232, 48, 16);
+    ctx.fillStyle = '#d9dee6';
+    ctx.fillRect(166, 224, 26, 9);
+    ctx.fillStyle = 'rgba(255, 234, 175, 0.35)';
+    ctx.beginPath();
+    ctx.moveTo(204, 238);
+    ctx.lineTo(266, 226);
+    ctx.lineTo(266, 252);
+    ctx.closePath();
+    ctx.fill();
+
+    // Diagonal rain streaks
+    ctx.strokeStyle = 'rgba(170, 212, 255, 0.28)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let i = 0; i < 65; i++) {
+      const rx = ((i * 73) % w);
+      const ry = ((i * 47) % h);
+      ctx.moveTo(rx, ry);
+      ctx.lineTo(rx - 5, ry + 16);
+    }
+    ctx.stroke();
+
+    // Subtle Tilt-Shift focus vignette
+    const vig = ctx.createLinearGradient(0, 0, 0, h);
+    vig.addColorStop(0, 'rgba(7, 11, 20, 0.45)');
+    vig.addColorStop(0.25, 'rgba(7, 11, 20, 0)');
+    vig.addColorStop(0.75, 'rgba(7, 11, 20, 0)');
+    vig.addColorStop(1, 'rgba(7, 11, 20, 0.45)');
+    ctx.fillStyle = vig;
+    ctx.fillRect(0, 0, w, h);
+  }, []);
+
   return (
     <div className="space-y-12 sm:space-y-14">
       {/* 1. Compact Editorial Intro Strip */}
@@ -68,6 +200,128 @@ export function HomePage() {
           advertising—shipping fast, client-side browser utilities for creators
           alongside optional $7 shader packs for game engines.
         </p>
+      </section>
+
+      {/* 2. Flagship 3D Showcase — Neon Rain · Hong Kong */}
+      <section aria-labelledby="neon-rain-showcase-title">
+        <div className="bg-white border border-[#DED9CE] rounded-[3px] grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
+          <div className="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-[#DED9CE]">
+            <div>
+              <div className="font-mono text-sm font-medium text-[#15803D] whitespace-nowrap shrink-0">
+                02 — LIVE · 3D SHOWCASE
+              </div>
+              <h2
+                id="neon-rain-showcase-title"
+                className="font-serif text-3xl sm:text-4xl text-[#1C1917] mt-2 text-balance"
+              >
+                Neon Rain · Hong Kong
+              </h2>
+              <ul className="mt-5 space-y-2.5 text-base text-[#57534E]">
+                <li className="flex items-start gap-2.5">
+                  <span className="font-mono text-sm text-[#15803D] mt-0.5 shrink-0">
+                    +
+                  </span>
+                  <span>
+                    Zero-asset procedural Three.js miniature rainy street corner
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="font-mono text-sm text-[#15803D] mt-0.5 shrink-0">
+                    +
+                  </span>
+                  <span>
+                    Live Tilt-Shift, Bayer 4×4 dithering &amp; CRT shader presets
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="font-mono text-sm text-[#15803D] mt-0.5 shrink-0">
+                    +
+                  </span>
+                  <span>
+                    Interactive orbit cameras, neon reflections &amp; rain audio
+                  </span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="mt-8 space-y-3">
+              <div className="flex flex-wrap items-center gap-3">
+                <Link
+                  to="/neon-rain"
+                  className="inline-flex items-center justify-center bg-[#15803D] hover:bg-[#166534] text-white px-4 py-2.5 rounded-[3px] text-sm font-medium transition-colors whitespace-nowrap shrink-0"
+                >
+                  Launch 3D Diorama -&gt;
+                </Link>
+                <a
+                  href={STATUS.buyLinks.ditherGumroad}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() =>
+                    trackEvent('click_pro_pack', {
+                      platform: 'gumroad',
+                      location: 'home_neon_rain',
+                    })
+                  }
+                  className="inline-flex items-center justify-center bg-white border border-[#DED9CE] hover:border-[#A8A29E] text-[#1C1917] px-4 py-2.5 rounded-[3px] text-sm font-medium transition-colors whitespace-nowrap shrink-0"
+                >
+                  Pro Pack ($7)
+                </a>
+              </div>
+              <div>
+                <a
+                  href={STATUS.supportUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() =>
+                    trackEvent('click_support_pass', {
+                      location: 'home_neon_rain',
+                    })
+                  }
+                  className="inline-block text-sm text-[#57534E] hover:text-[#1C1917] underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
+                >
+                  Support Run ($1+)
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div className="lg:col-span-7 bg-[#E7E3D8] p-4 sm:p-6 flex flex-col justify-between gap-4">
+            <Link
+              to="/neon-rain"
+              className="group block border border-[#DED9CE] rounded-[3px] bg-[#070b14] overflow-hidden relative"
+            >
+              <canvas
+                ref={neonPreviewCanvasRef}
+                width={480}
+                height={300}
+                className="w-full h-auto block transition-transform duration-300 group-hover:scale-[1.015]"
+              />
+              <span className="absolute top-3 left-3 font-mono text-xs px-2 py-1 bg-[#0a0f1d]/80 border border-white/15 text-slate-200 rounded-[3px]">
+                22.3193° N 114.1694° E
+              </span>
+              <span className="absolute bottom-3 right-3 font-mono text-xs px-2.5 py-1 bg-[#15803D] text-white rounded-[3px]">
+                Enter 3D Scene →
+              </span>
+            </Link>
+
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-2 font-mono text-xs text-[#1C1917]">
+                <span className="px-2.5 py-1 bg-white border border-[#DED9CE] rounded-[3px]">
+                  Cinema Neon
+                </span>
+                <span className="px-2.5 py-1 bg-white border border-[#DED9CE] rounded-[3px]">
+                  Bayer 4×4
+                </span>
+                <span className="px-2.5 py-1 bg-white border border-[#DED9CE] rounded-[3px]">
+                  CRT Retro
+                </span>
+              </div>
+              <span className="font-mono text-sm text-[#57534E] whitespace-nowrap shrink-0">
+                ZERO 3D MODELS · THREE.JS + GLSL
+              </span>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* 2. Featured Tool #1 — Full-Width Split Showcase */}

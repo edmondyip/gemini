@@ -9,6 +9,7 @@ interface LayoutProps {
 
 const NAV_ITEMS = [
   { to: '/', label: 'Hub', end: true },
+  { to: '/neon-rain', label: 'Neon Rain', end: false },
   { to: '/dither', label: 'Dither Lab', end: false },
   { to: '/log', label: 'Field Log', end: false },
 ] as const;
@@ -135,6 +136,12 @@ export function Layout({ children }: LayoutProps) {
               className="hover:text-[#1C1917] transition-colors whitespace-nowrap shrink-0"
             >
               Hub
+            </Link>
+            <Link
+              to="/neon-rain"
+              className="hover:text-[#1C1917] transition-colors whitespace-nowrap shrink-0"
+            >
+              Neon Rain
             </Link>
             <Link
               to="/dither"
