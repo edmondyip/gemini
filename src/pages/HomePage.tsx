@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { LOGS } from '../data/logs';
 import { STATUS } from '../data/status';
 import {
   DEFAULT_DITHER_PARAMS,
@@ -33,6 +34,7 @@ const UPCOMING_RELEASES = [
 export function HomePage() {
   const [activePalette, setActivePalette] = useState<PaletteId>('ink');
   const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const latestLog = [...LOGS].sort((a, b) => b.day - a.day)[0];
 
   const sourceScene = useMemo(() => {
     return renderProceduralScene('sphere', 480, 300);
@@ -202,7 +204,74 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* 3. Upcoming Releases — Horizontal Ledger Rows */}
+      {/* 3. Latest Field Dispatch & Transparent Public Ledger */}
+      <section aria-labelledby="latest-dispatch-title">
+        <div className="bg-white border border-[#E2DFD7] rounded-[3px] overflow-hidden">
+          <div className="p-5 sm:p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="space-y-1.5 max-w-3xl">
+              <div className="font-mono text-xs sm:text-sm font-medium text-[#15803D]">
+                LATEST FIELD DISPATCH · DAY{' '}
+                {String(latestLog.day).padStart(2, '0')} · {latestLog.date}
+              </div>
+              <h2
+                id="latest-dispatch-title"
+                className="font-serif text-2xl sm:text-3xl text-[#1C1917] leading-snug text-balance"
+              >
+                {latestLog.title}
+              </h2>
+              <p className="text-sm sm:text-base text-[#57534E] leading-relaxed line-clamp-2">
+                {latestLog.lesson}
+              </p>
+            </div>
+
+            <div className="shrink-0">
+              <Link
+                to="/log"
+                className="inline-flex items-center justify-center bg-white border border-[#E2DFD7] hover:border-[#15803D] hover:text-[#15803D] text-[#1C1917] px-4 py-2 rounded-[3px] text-sm font-medium transition-colors whitespace-nowrap shrink-0"
+              >
+                Read Full Field Log →
+              </Link>
+            </div>
+          </div>
+
+          <div className="border-t border-[#E2DFD7] bg-[#FAF9F6] px-5 sm:px-6 py-3 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+            <div>
+              <div className="font-mono text-xs text-[#57534E] uppercase">
+                Product Revenue
+              </div>
+              <div className="font-mono text-sm font-semibold tabular-nums text-[#1C1917]">
+                ${STATUS.productRevenueUsd.toFixed(2)}
+              </div>
+            </div>
+            <div>
+              <div className="font-mono text-xs text-[#57534E] uppercase">
+                Support Revenue
+              </div>
+              <div className="font-mono text-sm font-semibold tabular-nums text-[#1C1917]">
+                ${STATUS.supportRevenueUsd.toFixed(2)}
+              </div>
+            </div>
+            <div>
+              <div className="font-mono text-xs text-[#57534E] uppercase">
+                Ad Spend
+              </div>
+              <div className="font-mono text-sm font-semibold tabular-nums text-[#1C1917]">
+                ${STATUS.adSpendUsd.toFixed(2)}
+              </div>
+            </div>
+            <div>
+              <div className="font-mono text-xs text-[#57534E] uppercase">
+                Monthly Target
+              </div>
+              <div className="font-mono text-sm font-semibold tabular-nums text-[#1C1917]">
+                ${STATUS.targetUsd.toFixed(2)}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Upcoming Releases — Horizontal Ledger Rows */}
       <section aria-labelledby="upcoming-title">
         <h2
           id="upcoming-title"

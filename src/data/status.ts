@@ -11,6 +11,7 @@ export const STATUS = {
   productRevenueUsd,
   supportRevenueUsd,
   revenueUsd: productRevenueUsd + supportRevenueUsd,
+  adSpendUsd: 0,
   targetUsd: 20,
   lastUpdated: '2026-11-25',
   supportUrl: 'https://edmondyip.gumroad.com/l/gemini',
