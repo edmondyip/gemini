@@ -627,8 +627,15 @@ const CAMERA_PRESETS: Record<CameraPresetId, CameraPreset> = {
 
 export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle {
   const tracker = createTracker();
-  const initialW = Math.max(1, container.clientWidth);
-  const initialH = Math.max(1, container.clientHeight);
+  const getViewportSize = (): { w: number; h: number } => ({
+    w: container.clientWidth > 0 ? container.clientWidth : window.innerWidth || 1280,
+    h:
+      container.clientHeight > 0
+        ? container.clientHeight
+        : window.innerHeight || 720,
+  });
+
+  const { w: initialW, h: initialH } = getViewportSize();
   const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
 
   const renderer = new THREE.WebGLRenderer({
@@ -643,7 +650,13 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
   renderer.domElement.style.display = 'block';
   renderer.domElement.style.width = '100%';
   renderer.domElement.style.height = '100%';
+  container.replaceChildren();
   container.appendChild(renderer.domElement);
+
+  const onContextLost = (e: Event): void => {
+    e.preventDefault();
+  };
+  renderer.domElement.addEventListener('webglcontextlost', onContextLost);
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x070b14);
@@ -674,10 +687,13 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
   // ---------------------------------------------------------------------------
   // 1. Lighting & Atmosphere
   // ---------------------------------------------------------------------------
-  const hemiLight = new THREE.HemisphereLight(0x406090, 0x101018, 0.85);
+  const ambientLight = new THREE.AmbientLight(0x283a5c, 0.55);
+  scene.add(ambientLight);
+
+  const hemiLight = new THREE.HemisphereLight(0x6b96d6, 0x1d2236, 1.25);
   scene.add(hemiLight);
 
-  const moonLight = new THREE.DirectionalLight(0x88b4ff, 1.45);
+  const moonLight = new THREE.DirectionalLight(0x9ec5ff, 1.9);
   moonLight.position.set(14, 24, 16);
   moonLight.castShadow = true;
   moonLight.shadow.mapSize.set(2048, 2048);
@@ -1239,7 +1255,7 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
       map: bingSuttTex,
       emissive: new THREE.Color(0xffb454),
       emissiveMap: bingSuttTex,
-      emissiveIntensity: 1.05,
+      emissiveIntensity: 1.3,
       roughness: 0.22,
     })
   );
@@ -1262,7 +1278,7 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
   addCorrugatedAwning(bldgA, 2.86, 2.28, 0, 4.95, 1.05, Math.PI / 2);
 
   // Warm interior spill light onto sidewalk
-  const cafeLight = new THREE.PointLight(0xffa64d, 4.8, 9.5, 1.7);
+  const cafeLight = new THREE.PointLight(0xffa64d, 18, 14, 1.5);
   cafeLight.position.set(-0.6, 1.9, 0.9);
   scene.add(cafeLight);
 
@@ -1339,7 +1355,7 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
       map: roastTex,
       emissive: new THREE.Color(0xff8c42),
       emissiveMap: roastTex,
-      emissiveIntensity: 0.95,
+      emissiveIntensity: 1.3,
       roughness: 0.25,
     })
   );
@@ -1349,7 +1365,7 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
       map: pharmaTex,
       emissive: new THREE.Color(0x55ffd0),
       emissiveMap: pharmaTex,
-      emissiveIntensity: 0.9,
+      emissiveIntensity: 1.3,
       roughness: 0.25,
     })
   );
@@ -1448,11 +1464,6 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
   }
   addRooftopDetails(bldgC, 10.1, 5.6, 12.6, true, true);
 
-  // Back-alley warm glow between Buildings A/B and C
-  const alleyLight = new THREE.PointLight(0xff7744, 3.2, 7.5, 1.8);
-  alleyLight.position.set(-2.5, 2.2, -5.2);
-  scene.add(alleyLight);
-
   // --- Building D: East-Side Cross-Street Facade (x in [9.5, 11.8], z in [-9.5, 0.3]) ---
   const bldgD = new THREE.Group();
   bldgD.position.set(10.65, 0.3, -4.6); // 2.3 x 9.8
@@ -1473,7 +1484,7 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
       map: noodleTex,
       emissive: new THREE.Color(0xffa855),
       emissiveMap: noodleTex,
-      emissiveIntensity: 0.9,
+      emissiveIntensity: 1.3,
       roughness: 0.24,
     })
   );
@@ -1546,7 +1557,7 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
       offset: [1.35, 0, 1.35],
       rotY: Math.PI / 4,
       lightColor: 0xff4433,
-      lightIntensity: 6.5,
+      lightIntensity: 22,
     },
     // 2. 冰室 Cha Chaan Teng marquee over main avenue
     {
@@ -1560,7 +1571,7 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
       offset: [0, 0, 1.55],
       rotY: 0,
       lightColor: 0xff2a85,
-      lightIntensity: 7.5,
+      lightIntensity: 26,
     },
     // 3. 霓虹 tall vertical cyan/magenta blade
     {
@@ -1573,7 +1584,7 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
       offset: [0, 0, 1.75],
       rotY: Math.PI / 2,
       lightColor: 0x00e5ff,
-      lightIntensity: 6.2,
+      lightIntensity: 22,
     },
     // 4. 茶餐廳 horizontal upper sign on Bldg A
     {
@@ -1597,8 +1608,6 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
       anchor: [0.6, 4.5, -1.6],
       offset: [1.55, 0, 0],
       rotY: 0,
-      lightColor: 0xff2a85,
-      lightIntensity: 5.5,
     },
     // 6. 飯店 vertical sign over Cross Street
     {
@@ -1622,7 +1631,7 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
       offset: [0, 0, 1.85],
       rotY: Math.PI / 2,
       lightColor: 0xff9d2e,
-      lightIntensity: 6.5,
+      lightIntensity: 22,
     },
     // 8. 燒臘 horizontal above shopfront B
     {
@@ -1646,7 +1655,7 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
       offset: [0, 0, 1.45],
       rotY: Math.PI / 2,
       lightColor: 0x22ff88,
-      lightIntensity: 5.2,
+      lightIntensity: 18,
       flicker: true,
     },
     // 10. 夜市 horizontal neon sign (flickering!)
@@ -1672,8 +1681,6 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
       anchor: [9.5, 5.2, -2.0],
       offset: [-1.45, 0, 0],
       rotY: 0,
-      lightColor: 0x22ff88,
-      lightIntensity: 4.8,
     },
     // 12. 龍鳳 amber/magenta sign jutting west from Building D
     {
@@ -1716,7 +1723,7 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
         map: tex,
         emissive: new THREE.Color(0xffffff),
         emissiveMap: tex,
-        emissiveIntensity: 1.55,
+        emissiveIntensity: 1.8,
         roughness: 0.25,
       })
     );
@@ -1761,8 +1768,8 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
       pointLight = new THREE.PointLight(
         spec.lightColor,
         spec.lightIntensity,
-        11.5,
-        1.65
+        15.5,
+        1.5
       );
       pointLight.position.set(cx, cy - 0.35, cz);
       scene.add(pointLight);
@@ -1772,7 +1779,7 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
       flickerSigns.push({
         material: faceMat,
         light: pointLight,
-        baseEmissive: 1.55,
+        baseEmissive: 1.8,
         baseLight: spec.lightIntensity ?? 0,
         seed: i * 17.3 + 4.1,
       });
@@ -1835,11 +1842,11 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
   }
 
   // Two subtle warm streetlamp PointLights for warm pavement pools
-  const streetWarm1 = new THREE.PointLight(0xffb86b, 4.2, 10.5, 1.7);
+  const streetWarm1 = new THREE.PointLight(0xffb86b, 14, 14, 1.5);
   streetWarm1.position.set(-2.8, 3.6, 1.8);
   scene.add(streetWarm1);
 
-  const streetWarm2 = new THREE.PointLight(0xffb86b, 3.8, 10.5, 1.7);
+  const streetWarm2 = new THREE.PointLight(0xffb86b, 14, 14, 1.5);
   streetWarm2.position.set(5.2, 3.6, 9.2);
   scene.add(streetWarm2);
 
@@ -1947,7 +1954,7 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
     taxiGroup.add(tl);
   }
 
-  const taxiHeadLight = new THREE.PointLight(0xffe8b0, 3.6, 7.0, 1.8);
+  const taxiHeadLight = new THREE.PointLight(0xffe8b0, 12, 11, 1.5);
   taxiHeadLight.position.set(1.45, 0.45, 0);
   taxiGroup.add(taxiHeadLight);
 
@@ -2004,7 +2011,7 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
   tramLamp.position.set(-1.82, 0.72, 0);
   tramGroup.add(tramLamp);
 
-  const tramPointLight = new THREE.PointLight(0xffe5a8, 3.4, 7.5, 1.7);
+  const tramPointLight = new THREE.PointLight(0xffe5a8, 12, 11, 1.5);
   tramPointLight.position.set(-2.3, 0.9, 0);
   tramGroup.add(tramPointLight);
 
@@ -2167,8 +2174,7 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
   controls.addEventListener('end', onControlEnd);
 
   const handleResize = (): void => {
-    const w = Math.max(1, container.clientWidth);
-    const h = Math.max(1, container.clientHeight);
+    const { w, h } = getViewportSize();
     const pr = Math.min(window.devicePixelRatio || 1, 2);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
@@ -2183,6 +2189,11 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
     resizeObserver.observe(container);
   }
   window.addEventListener('resize', handleResize);
+  window.requestAnimationFrame(() => {
+    if (!disposed) {
+      handleResize();
+    }
+  });
 
   const clock = new THREE.Clock();
   let rafId = 0;
@@ -2353,6 +2364,7 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
       disposed = true;
       window.cancelAnimationFrame(rafId);
       window.removeEventListener('resize', handleResize);
+      renderer.domElement.removeEventListener('webglcontextlost', onContextLost);
       resizeObserver?.disconnect();
       controls.removeEventListener('start', onControlStart);
       controls.removeEventListener('end', onControlEnd);
@@ -2360,9 +2372,7 @@ export function mountNeonRainScene(container: HTMLElement): NeonRainSceneHandle 
       postFx.dispose();
       tracker.disposeAll();
       renderer.dispose();
-      if (renderer.domElement.parentNode === container) {
-        container.removeChild(renderer.domElement);
-      }
+      renderer.domElement.remove();
     },
   };
 }

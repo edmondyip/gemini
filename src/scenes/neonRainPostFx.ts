@@ -110,8 +110,6 @@ const VERTEX_SHADER = /* glsl */ `
 `;
 
 const FRAGMENT_SHADER = /* glsl */ `
-  precision highp float;
-
   uniform sampler2D tDiffuse;
   uniform vec2 uResolution;
   uniform float uTime;
@@ -131,30 +129,17 @@ const FRAGMENT_SHADER = /* glsl */ `
 
   varying vec2 vUv;
 
-  float bayer4x4(vec2 cell) {
-    int x = int(mod(cell.x, 4.0));
-    int y = int(mod(cell.y, 4.0));
-    int index = y * 4 + x;
-
-    if (index == 0) return 0.0 / 16.0;
-    if (index == 1) return 8.0 / 16.0;
-    if (index == 2) return 2.0 / 16.0;
-    if (index == 3) return 10.0 / 16.0;
-    if (index == 4) return 12.0 / 16.0;
-    if (index == 5) return 4.0 / 16.0;
-    if (index == 6) return 14.0 / 16.0;
-    if (index == 7) return 6.0 / 16.0;
-    if (index == 8) return 3.0 / 16.0;
-    if (index == 9) return 11.0 / 16.0;
-    if (index == 10) return 1.0 / 16.0;
-    if (index == 11) return 9.0 / 16.0;
-    if (index == 12) return 15.0 / 16.0;
-    if (index == 13) return 7.0 / 16.0;
-    if (index == 14) return 13.0 / 16.0;
-    return 5.0 / 16.0;
+  float nrBayer2(vec2 a) {
+    a = floor(a);
+    return fract(a.x * 0.5 + a.y * a.y * 0.75);
   }
 
-  vec3 acesFilm(vec3 x) {
+  float nrBayer4x4(vec2 cell) {
+    vec2 c = mod(floor(cell), 4.0);
+    return nrBayer2(floor(c * 0.5)) * 0.25 + nrBayer2(c);
+  }
+
+  vec3 nrAcesFilm(vec3 x) {
     float a = 2.51;
     float b = 0.03;
     float c = 2.43;
@@ -163,11 +148,11 @@ const FRAGMENT_SHADER = /* glsl */ `
     return clamp((x * (a * x + b)) / (x * (c * x + d) + e), 0.0, 1.0);
   }
 
-  float luminance(vec3 c) {
+  float nrLuminance(vec3 c) {
     return dot(c, vec3(0.2126, 0.7152, 0.0722));
   }
 
-  vec3 sampleScene(vec2 uv, float blurAmount) {
+  vec3 nrSampleScene(vec2 uv, float blurAmount) {
     if (blurAmount <= 0.0001) {
       return texture2D(tDiffuse, uv).rgb;
     }
@@ -209,12 +194,12 @@ const FRAGMENT_SHADER = /* glsl */ `
 
     vec3 color;
     if (uChromaticAberration > 0.005) {
-      float r = sampleScene(clamp(uv + chromaOffset, 0.001, 0.999), blurPixels).r;
-      float g = sampleScene(uv, blurPixels).g;
-      float b = sampleScene(clamp(uv - chromaOffset, 0.001, 0.999), blurPixels).b;
+      float r = nrSampleScene(clamp(uv + chromaOffset, 0.001, 0.999), blurPixels).r;
+      float g = nrSampleScene(uv, blurPixels).g;
+      float b = nrSampleScene(clamp(uv - chromaOffset, 0.001, 0.999), blurPixels).b;
       color = vec3(r, g, b);
     } else {
-      color = sampleScene(uv, blurPixels);
+      color = nrSampleScene(uv, blurPixels);
     }
 
     // 4. Cheap neon highlight bloom glow
@@ -225,20 +210,20 @@ const FRAGMENT_SHADER = /* glsl */ `
       vec3 s1 = texture2D(tDiffuse, clamp(uv + vec2(-bloomStep.x, bloomStep.y), 0.001, 0.999)).rgb;
       vec3 s2 = texture2D(tDiffuse, clamp(uv + vec2(bloomStep.x, -bloomStep.y), 0.001, 0.999)).rgb;
       vec3 s3 = texture2D(tDiffuse, clamp(uv + vec2(-bloomStep.x, -bloomStep.y), 0.001, 0.999)).rgb;
-      glow += s0 * max(0.0, luminance(s0) - 0.68);
-      glow += s1 * max(0.0, luminance(s1) - 0.68);
-      glow += s2 * max(0.0, luminance(s2) - 0.68);
-      glow += s3 * max(0.0, luminance(s3) - 0.68);
+      glow += s0 * max(0.0, nrLuminance(s0) - 0.52);
+      glow += s1 * max(0.0, nrLuminance(s1) - 0.52);
+      glow += s2 * max(0.0, nrLuminance(s2) - 0.52);
+      glow += s3 * max(0.0, nrLuminance(s3) - 0.52);
       color += (glow * 0.25) * uBloomBoost;
     }
 
     // 5. ACES Filmic tone mapping + grade + gamma encoding
-    color *= 1.15;
-    color = acesFilm(color);
+    color *= 1.28;
+    color = nrAcesFilm(color);
     color = pow(max(color, vec3(0.0)), vec3(1.0 / 2.2));
 
     // Saturation & contrast
-    float luma = luminance(color);
+    float luma = nrLuminance(color);
     color = mix(vec3(luma), color, uSaturation);
     color = clamp((color - 0.5) * uContrast + 0.5, 0.0, 1.0);
     color *= uTint;
@@ -247,7 +232,7 @@ const FRAGMENT_SHADER = /* glsl */ `
     // 6. Ordered Bayer 4x4 dithering & color quantization
     if (uDitherStrength > 0.001) {
       vec2 ditherCell = floor(gl_FragCoord.xy / max(1.0, uPixelScale));
-      float threshold = bayer4x4(ditherCell) - 0.5;
+      float threshold = nrBayer4x4(ditherCell) - 0.5;
       float levels = max(2.0, uColorLevels - 1.0);
       vec3 dithered = floor(clamp(color + threshold / levels, 0.0, 1.0) * levels + 0.5) / levels;
       color = mix(color, dithered, uDitherStrength);
@@ -277,9 +262,12 @@ export class NeonRainPostFx {
   private quadGeometry: THREE.PlaneGeometry;
   private material: THREE.ShaderMaterial;
   private quadMesh: THREE.Mesh;
+  private fallbackDirect = false;
+  private verified = false;
+  private postShaderChecked = false;
 
   constructor(
-    renderer: THREE.WebGLRenderer,
+    _renderer: THREE.WebGLRenderer,
     width: number,
     height: number,
     pixelRatio: number,
@@ -287,20 +275,20 @@ export class NeonRainPostFx {
   ) {
     const rtWidth = Math.max(1, Math.floor(width * pixelRatio));
     const rtHeight = Math.max(1, Math.floor(height * pixelRatio));
-    const textureType = renderer.capabilities.isWebGL2
-      ? THREE.HalfFloatType
-      : THREE.UnsignedByteType;
 
     this.renderTarget = new THREE.WebGLRenderTarget(rtWidth, rtHeight, {
       minFilter: THREE.LinearFilter,
       magFilter: THREE.LinearFilter,
       format: THREE.RGBAFormat,
-      type: textureType,
+      type: THREE.UnsignedByteType,
       depthBuffer: true,
+      stencilBuffer: false,
+      generateMipmaps: false,
     });
 
     this.quadScene = new THREE.Scene();
     this.quadCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    this.quadCamera.position.z = 1;
     this.quadGeometry = new THREE.PlaneGeometry(2, 2);
 
     const preset = LOOK_PRESETS[initialPreset];
@@ -363,17 +351,71 @@ export class NeonRainPostFx {
     );
   }
 
+  private enableDirectFallback(
+    renderer: THREE.WebGLRenderer,
+    scene: THREE.Scene,
+    camera: THREE.Camera
+  ): void {
+    this.fallbackDirect = true;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.25;
+    renderer.setRenderTarget(null);
+    renderer.clear(true, true, true);
+    renderer.render(scene, camera);
+  }
+
   render(
     renderer: THREE.WebGLRenderer,
     scene: THREE.Scene,
     camera: THREE.Camera,
     elapsedSeconds: number
   ): void {
-    this.material.uniforms.uTime.value = elapsedSeconds;
-    renderer.setRenderTarget(this.renderTarget);
-    renderer.render(scene, camera);
-    renderer.setRenderTarget(null);
-    renderer.render(this.quadScene, this.quadCamera);
+    if (this.fallbackDirect) {
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.25;
+      renderer.setRenderTarget(null);
+      renderer.clear(true, true, true);
+      renderer.render(scene, camera);
+      return;
+    }
+
+    try {
+      this.material.uniforms.uTime.value = elapsedSeconds;
+      renderer.setRenderTarget(this.renderTarget);
+
+      if (!this.verified) {
+        this.verified = true;
+        const gl = renderer.getContext();
+        if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) {
+          this.enableDirectFallback(renderer, scene, camera);
+          return;
+        }
+      }
+
+      renderer.clear(true, true, true);
+      renderer.render(scene, camera);
+      renderer.setRenderTarget(null);
+      renderer.clear(true, true, true);
+      renderer.render(this.quadScene, this.quadCamera);
+
+      if (!this.postShaderChecked) {
+        this.postShaderChecked = true;
+        const programs = renderer.info.programs;
+        if (programs) {
+          for (const prog of programs) {
+            const diagnostics = (
+              prog as unknown as { diagnostics?: { runnable?: boolean } }
+            ).diagnostics;
+            if (diagnostics && diagnostics.runnable === false) {
+              this.enableDirectFallback(renderer, scene, camera);
+              return;
+            }
+          }
+        }
+      }
+    } catch {
+      this.enableDirectFallback(renderer, scene, camera);
+    }
   }
 
   dispose(): void {

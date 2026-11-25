@@ -105,11 +105,11 @@ export function NeonRainPage() {
   };
 
   return (
-    <div className="relative w-full h-[100dvh] overflow-hidden bg-[#070b14] text-white select-none">
+    <div className="relative w-full h-[100dvh] min-h-screen overflow-hidden bg-[#070b14] text-white select-none">
       {/* Full-viewport 3D WebGL canvas mount */}
       <div
         ref={containerRef}
-        className="absolute inset-0 cursor-grab active:cursor-grabbing"
+        className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing"
         aria-label="Interactive 3D rainy Hong Kong neon street diorama"
       />
 
@@ -143,15 +143,15 @@ export function NeonRainPage() {
           onClick={handleOpenSkillModal}
           className="pointer-events-auto bg-[#15803D] hover:bg-[#166534] text-white font-medium text-xs sm:text-sm px-3.5 py-2 rounded-[4px] border border-emerald-400/30 shadow-lg transition-colors cursor-pointer whitespace-nowrap shrink-0"
         >
-          Get the AI Skill ($7)
+          AI Skill · Preview
         </button>
       </header>
 
       {/* Bottom Compact Control Dock */}
       <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-20 p-3 sm:p-5 flex justify-center">
-        <div className="pointer-events-auto w-full max-w-4xl bg-[#0a0f1d]/80 backdrop-blur-md border border-white/15 rounded-[6px] px-3 py-2.5 shadow-2xl flex flex-col md:flex-row md:items-center md:justify-between gap-2.5">
+        <div className="pointer-events-auto w-fit max-w-[calc(100vw-1.5rem)] bg-[#0a0f1d]/82 backdrop-blur-md border border-white/15 rounded-[6px] px-3 py-2 shadow-2xl flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
           {/* Camera Presets */}
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+          <div className="flex flex-wrap items-center justify-center gap-1.5">
             <span className="font-mono text-[11px] uppercase tracking-wider text-slate-400 mr-1 whitespace-nowrap shrink-0">
               Cam
             </span>
@@ -174,10 +174,10 @@ export function NeonRainPage() {
             })}
           </div>
 
-          <div className="hidden md:block h-5 w-px bg-white/15 shrink-0" />
+          <div className="hidden xl:block h-4 w-px bg-white/15 shrink-0" />
 
           {/* Look Presets */}
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+          <div className="flex flex-wrap items-center justify-center gap-1.5">
             <span className="font-mono text-[11px] uppercase tracking-wider text-slate-400 mr-1 whitespace-nowrap shrink-0">
               Look
             </span>
@@ -200,10 +200,10 @@ export function NeonRainPage() {
             })}
           </div>
 
-          <div className="hidden md:block h-5 w-px bg-white/15 shrink-0" />
+          <div className="hidden xl:block h-4 w-px bg-white/15 shrink-0" />
 
           {/* Rain & Sound Toggles */}
-          <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex flex-wrap items-center justify-center gap-1.5 shrink-0">
             <button
               type="button"
               onClick={handleToggleRain}
@@ -255,7 +255,7 @@ export function NeonRainPage() {
             </button>
 
             <div className="font-mono text-xs uppercase tracking-wider text-[#15803D] font-semibold">
-              MICRO-DIORAMA AI SKILL · PREVIEW
+              ZERO-ASSET 3D SHOWCASE · PREVIEW
             </div>
             <h2
               id="skill-modal-title"
@@ -264,16 +264,17 @@ export function NeonRainPage() {
               Make Any City With This AI Skill
             </h2>
             <p className="mt-4 text-sm sm:text-base text-[#57534E] leading-relaxed">
-              This entire rainy Hong Kong diorama runs in zero-asset procedural
-              Three.js—no `.glb` models, no external textures—powered by our
-              live Bayer 4×4 + Tilt-Shift + CRT shader pipeline.
+              This rainy Hong Kong diorama is a live, zero-asset procedural
+              Three.js scene rendered in real time with our Tilt-Shift, Bayer
+              4×4 dithering, and CRT shader pipeline—no external `.glb` models,
+              image textures, or audio files.
             </p>
             <p className="mt-3 text-sm sm:text-base text-[#57534E] leading-relaxed">
               The upcoming{' '}
               <strong className="text-[#1C1917] font-semibold">
                 Micro-Diorama AI Skill Pack
               </strong>{' '}
-              drops straight into{' '}
+              for{' '}
               <span className="font-mono text-xs bg-white border border-[#DED9CE] px-1.5 py-0.5 rounded-[2px] text-[#1C1917]">
                 Claude Code
               </span>
@@ -285,12 +286,11 @@ export function NeonRainPage() {
               <span className="font-mono text-xs bg-white border border-[#DED9CE] px-1.5 py-0.5 rounded-[2px] text-[#1C1917]">
                 Cursor
               </span>
-              , or{' '}
+              , and{' '}
               <span className="font-mono text-xs bg-white border border-[#DED9CE] px-1.5 py-0.5 rounded-[2px] text-[#1C1917]">
                 Antigravity
               </span>{' '}
-              so your AI agent can generate <em>any</em> city corner (Tokyo,
-              Taipei, London, Seoul) in this exact aesthetic.
+              is currently in development and not on sale yet.
             </p>
 
             <div className="mt-6 flex flex-wrap items-center gap-3">
@@ -324,8 +324,8 @@ export function NeonRainPage() {
             </div>
 
             <p className="mt-4 pt-3 border-t border-[#DED9CE] font-mono text-xs text-[#57534E] italic">
-              Micro-Diorama AI Skill Pack ($7) launching next — supporters &amp;
-              Pro buyers get early access.
+              Micro-Diorama AI Skill Pack is coming soon — supporters &amp; Pro
+              buyers get early access when it launches.
             </p>
           </div>
         </div>
