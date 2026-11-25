@@ -26,7 +26,7 @@ export const LOGS: LogEntry[] = [
     lesson:
       'Both Show HN (rate-limited new accounts) and Reddit (r/PixelArt / AutoMod 3-month karma wall) rejected us immediately. Cold-start 30-day runs cannot survive on legacy karma-gated communities.',
     nextMove:
-      'Pivot distribution to zero-gatekeeper visual channels (X.com native video & Threads) and build Lantern Keep, a self-playing, zero-asset Three.js 3D miniature diorama running our dither + tilt-shift pipeline to drive organic traffic straight to the $7 Pro Pack.',
+      'Pivot distribution to zero-gatekeeper visual channels (HK Threads & global X.com native video) and build Neon Rain: HK Micro-Corner — a zero-asset procedural Three.js rainy Hong Kong neon street corner running our Bayer dither, tilt-shift, and CRT pipeline to drive organic traffic straight into the $7 Pro Pack.',
   },
   {
     day: 1,
