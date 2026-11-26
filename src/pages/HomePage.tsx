@@ -35,6 +35,7 @@ export function HomePage() {
   const [activePalette, setActivePalette] = useState<PaletteId>('ink');
   const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const neonPreviewCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const poolPreviewCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const latestLog = [...LOGS].sort((a, b) => b.day - a.day)[0];
 
   const sourceScene = useMemo(() => {
@@ -188,6 +189,130 @@ export function HomePage() {
     ctx.fillRect(0, 0, w, h);
   }, []);
 
+  useEffect(() => {
+    const canvas = poolPreviewCanvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const w = canvas.width;
+    const h = canvas.height;
+
+    // Warm cream limestone deck surround
+    ctx.fillStyle = '#efe5d4';
+    ctx.fillRect(0, 0, w, h);
+    ctx.strokeStyle = '#dfd1ba';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < w; x += 48) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, h);
+      ctx.stroke();
+    }
+    for (let y = 0; y < h; y += 48) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(w, y);
+      ctx.stroke();
+    }
+
+    // Black-and-white checkered ceramic coping rim
+    const px = 54;
+    const py = 36;
+    const pw = w - 108;
+    const ph = h - 72;
+    const rim = 14;
+    for (let x = px - rim; x < px + pw + rim; x += 14) {
+      for (let y = py - rim; y < py + ph + rim; y += 14) {
+        if (x >= px && x < px + pw && y >= py && y < py + ph) continue;
+        const dark = ((Math.floor(x / 14) + Math.floor(y / 14)) % 2) === 0;
+        ctx.fillStyle = dark ? '#1f242b' : '#faf8f4';
+        ctx.fillRect(x, y, 14, 14);
+      }
+    }
+
+    // Sunlit turquoise pool interior
+    const waterGrad = ctx.createLinearGradient(px, py, px, py + ph);
+    waterGrad.addColorStop(0, '#5ec7e4');
+    waterGrad.addColorStop(1, '#36a6c9');
+    ctx.fillStyle = waterGrad;
+    ctx.fillRect(px, py, pw, ph);
+
+    // Subtle mosaic grid & sunlit caustics
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.14)';
+    ctx.lineWidth = 1;
+    for (let x = px; x <= px + pw; x += 18) {
+      ctx.beginPath();
+      ctx.moveTo(x, py);
+      ctx.lineTo(x, py + ph);
+      ctx.stroke();
+    }
+    for (let y = py; y <= py + ph; y += 18) {
+      ctx.beginPath();
+      ctx.moveTo(px, y);
+      ctx.lineTo(px + pw, y);
+      ctx.stroke();
+    }
+
+    ctx.strokeStyle = 'rgba(225, 252, 255, 0.42)';
+    ctx.lineWidth = 1.6;
+    for (let i = 0; i < 18; i++) {
+      const cx = px + 30 + ((i * 67) % (pw - 60));
+      const cy = py + 24 + ((i * 53) % (ph - 48));
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, 22 + (i % 3) * 8, 12 + (i % 2) * 6, (i % 5) * 0.4, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    // Soft swaying palm shadow on right corner
+    ctx.save();
+    ctx.fillStyle = 'rgba(28, 38, 42, 0.16)';
+    ctx.translate(w - 50, h - 20);
+    ctx.rotate(-0.65);
+    for (let i = 0; i < 9; i++) {
+      ctx.beginPath();
+      ctx.ellipse(-i * 18, (i % 2 === 0 ? -1 : 1) * 14, 24, 5, i % 2 === 0 ? -0.5 : 0.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+
+    // Floating blossoms & paper boat
+    const drawBlossom = (bx: number, by: number, color: string) => {
+      ctx.fillStyle = color;
+      for (let k = 0; k < 5; k++) {
+        const a = (k / 5) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.ellipse(bx + Math.cos(a) * 6, by + Math.sin(a) * 6, 5, 3, a, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.fillStyle = '#ffd166';
+      ctx.beginPath();
+      ctx.arc(bx, by, 3, 0, Math.PI * 2);
+      ctx.fill();
+    };
+
+    drawBlossom(150, 118, '#ff6b6b');
+    drawBlossom(218, 184, '#fff8eb');
+    drawBlossom(315, 134, '#ff924c');
+    drawBlossom(174, 206, '#ff6b6b');
+
+    // Origami paper boat
+    ctx.fillStyle = '#fbf7ef';
+    ctx.beginPath();
+    ctx.moveTo(240, 102);
+    ctx.lineTo(286, 102);
+    ctx.lineTo(276, 116);
+    ctx.lineTo(250, 116);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(252, 102);
+    ctx.lineTo(263, 84);
+    ctx.lineTo(274, 102);
+    ctx.closePath();
+    ctx.fill();
+  }, []);
+
   return (
     <div className="space-y-12 sm:space-y-14">
       {/* 1. Compact Editorial Intro Strip */}
@@ -200,6 +325,112 @@ export function HomePage() {
           advertising—shipping fast, client-side browser utilities for creators
           alongside optional $7 shader packs for game engines.
         </p>
+      </section>
+
+      {/* 2. Flagship Interactive Water Physics — Sunlit Pool */}
+      <section aria-labelledby="sunlit-pool-showcase-title">
+        <div className="bg-white border border-[#DED9CE] rounded-[3px] grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
+          <div className="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-[#DED9CE]">
+            <div>
+              <div className="font-mono text-sm font-medium text-[#15803D] whitespace-nowrap shrink-0">
+                03 — LIVE · WATER PHYSICS
+              </div>
+              <h2
+                id="sunlit-pool-showcase-title"
+                className="font-serif text-3xl sm:text-4xl text-[#1C1917] mt-2 text-balance"
+              >
+                Sunlit Pool
+              </h2>
+              <ul className="mt-5 space-y-2.5 text-base text-[#57534E]">
+                <li className="flex items-start gap-2.5">
+                  <span className="font-mono text-sm text-[#15803D] mt-0.5 shrink-0">
+                    +
+                  </span>
+                  <span>
+                    Real-time 128×128 2D wave-equation heightfield simulation
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="font-mono text-sm text-[#15803D] mt-0.5 shrink-0">
+                    +
+                  </span>
+                  <span>
+                    Wave-coupled GLSL pool caustics &amp; swaying palm shadows
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="font-mono text-sm text-[#15803D] mt-0.5 shrink-0">
+                    +
+                  </span>
+                  <span>
+                    Buoyant blossoms, origami boats, pool rings &amp; water audio
+                  </span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="mt-8 space-y-3">
+              <div className="flex flex-wrap items-center gap-3">
+                <Link
+                  to="/pool"
+                  className="inline-flex items-center justify-center bg-[#15803D] hover:bg-[#166534] text-white px-4 py-2.5 rounded-[3px] text-sm font-medium transition-colors whitespace-nowrap shrink-0"
+                >
+                  Launch Sunlit Pool -&gt;
+                </Link>
+                <a
+                  href={STATUS.supportUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() =>
+                    trackEvent('click_support_pass', {
+                      location: 'home_sunlit_pool',
+                    })
+                  }
+                  className="inline-flex items-center justify-center bg-white border border-[#DED9CE] hover:border-[#A8A29E] text-[#1C1917] px-4 py-2.5 rounded-[3px] text-sm font-medium transition-colors whitespace-nowrap shrink-0"
+                >
+                  Support Run ($1+)
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div className="lg:col-span-7 bg-[#E7E3D8] p-4 sm:p-6 flex flex-col justify-between gap-4">
+            <Link
+              to="/pool"
+              className="group block border border-[#DED9CE] rounded-[3px] bg-[#e8e2d5] overflow-hidden relative"
+            >
+              <canvas
+                ref={poolPreviewCanvasRef}
+                width={480}
+                height={300}
+                className="w-full h-auto block transition-transform duration-300 group-hover:scale-[1.015]"
+              />
+              <span className="absolute top-3 left-3 font-mono text-xs px-2 py-1 bg-[#FAF7F2]/85 border border-[#1C1917]/15 text-[#1C1917] rounded-[3px]">
+                128×128 WAVE SOLVER
+              </span>
+              <span className="absolute bottom-3 right-3 font-mono text-xs px-2.5 py-1 bg-[#15803D] text-white rounded-[3px]">
+                Enter Pool →
+              </span>
+            </Link>
+
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-2 font-mono text-xs text-[#1C1917]">
+                <span className="px-2.5 py-1 bg-white border border-[#DED9CE] rounded-[3px]">
+                  Ripple Wake
+                </span>
+                <span className="px-2.5 py-1 bg-white border border-[#DED9CE] rounded-[3px]">
+                  GLSL Caustics
+                </span>
+                <span className="px-2.5 py-1 bg-white border border-[#DED9CE] rounded-[3px]">
+                  Buoyancy
+                </span>
+              </div>
+              <span className="font-mono text-sm text-[#57534E] whitespace-nowrap shrink-0">
+                ZERO 3D MODELS · THREE.JS + GLSL
+              </span>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* 2. Flagship 3D Showcase — Neon Rain · Hong Kong */}

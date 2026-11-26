@@ -4,11 +4,13 @@ import { DitherLabPage } from './pages/DitherLabPage';
 import { HomePage } from './pages/HomePage';
 import { LogPage } from './pages/LogPage';
 import { NeonRainPage } from './pages/NeonRainPage';
+import { SunlitPoolPage } from './pages/SunlitPoolPage';
 
 export function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/pool" element={<SunlitPoolPage />} />
         <Route path="/neon-rain" element={<NeonRainPage />} />
         <Route
           path="/"
