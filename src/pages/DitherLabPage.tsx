@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { DemoSwitcher } from '../components/DemoSwitcher';
 import { STATUS } from '../data/status';
 import {
   ALGORITHMS,
@@ -191,7 +192,7 @@ export function DitherLabPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-3">
         <div>
           <span className="font-mono text-sm text-[#15803D] font-medium">
             TOOL 01 // BROWSER STUDIO
@@ -200,9 +201,12 @@ export function DitherLabPage() {
             Dither &amp; CRT Lab
           </h1>
         </div>
-        <p className="text-sm text-[#57534E] font-mono">
-          Zero upload · 100% local Canvas 2D processing
-        </p>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          <DemoSwitcher theme="light" />
+          <p className="text-sm text-[#57534E] font-mono whitespace-nowrap shrink-0">
+            Zero upload · 100% local Canvas 2D processing
+          </p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { DemoSwitcher } from '../components/DemoSwitcher';
 import { STATUS } from '../data/status';
 import { LOOK_PRESETS, LookPresetId } from '../scenes/neonRainPostFx';
 import {
@@ -135,26 +135,22 @@ export function NeonRainPage() {
       {/* Top HUD Bar */}
       {!uiHidden && (
         <header className="pointer-events-none absolute top-0 left-0 right-0 z-20 p-3 sm:p-5 flex flex-wrap items-start justify-between gap-3">
-          {/* Top-Left Floating Pill */}
-          <div className="pointer-events-auto flex flex-wrap items-center gap-x-3 gap-y-1 bg-[#0a0f1d]/75 backdrop-blur-md border border-white/15 rounded-[4px] px-3 py-2 font-mono text-xs text-slate-200 shadow-lg">
-            <Link
-              to="/"
-              className="text-emerald-400 hover:text-emerald-300 font-medium transition-colors whitespace-nowrap shrink-0"
-            >
-              ← Hub
-            </Link>
-            <span className="text-white/25 hidden sm:inline">|</span>
-            <span className="font-semibold tracking-wide text-white whitespace-nowrap shrink-0">
-              NEON RAIN · HONG KONG
-            </span>
-            <span className="text-white/25 hidden md:inline">|</span>
-            <span className="text-slate-300 tabular-nums hidden md:inline whitespace-nowrap shrink-0">
-              22.3193° N 114.1694° E
-            </span>
-            <span className="text-white/25 hidden lg:inline">|</span>
-            <span className="text-slate-400 hidden lg:inline whitespace-nowrap shrink-0">
-              Zero 3D Models · Pure Three.js
-            </span>
+          {/* Top-Left Cross-Demo Switcher + Scene Pill */}
+          <div className="flex flex-wrap items-center gap-2">
+            <DemoSwitcher theme="dark" className="pointer-events-auto" />
+            <div className="pointer-events-auto flex flex-wrap items-center gap-x-3 gap-y-1 bg-[#0a0f1d]/75 backdrop-blur-md border border-white/15 rounded-[4px] px-3 py-1.5 font-mono text-xs text-slate-200 shadow-lg">
+              <span className="font-semibold tracking-wide text-white whitespace-nowrap shrink-0">
+                NEON RAIN · HONG KONG
+              </span>
+              <span className="text-white/25 hidden md:inline">|</span>
+              <span className="text-slate-300 tabular-nums hidden md:inline whitespace-nowrap shrink-0">
+                22.3193° N 114.1694° E
+              </span>
+              <span className="text-white/25 hidden lg:inline">|</span>
+              <span className="text-slate-400 hidden lg:inline whitespace-nowrap shrink-0">
+                Zero 3D Models · Pure Three.js
+              </span>
+            </div>
           </div>
 
           {/* Top-Right Primary CTA */}

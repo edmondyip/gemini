@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { DemoSwitcher } from '../components/DemoSwitcher';
 import { STATUS } from '../data/status';
 import { PoolAudioController } from '../scenes/poolAudio';
 import {
@@ -124,20 +125,14 @@ export function SunlitPoolPage() {
       {/* Top Editorial Floating HUD */}
       {!uiHidden && (
         <header className="pointer-events-none absolute top-0 left-0 right-0 z-20 p-3 sm:p-5 flex flex-wrap items-start justify-between gap-3">
-          {/* Top-Left Editorial Title Pill */}
-          <div className="pointer-events-auto flex flex-wrap items-center gap-x-3 gap-y-1 bg-[#FAF7F2]/82 backdrop-blur-md border border-[#1C1917]/12 rounded-[4px] px-3.5 py-2 shadow-sm">
-            <Link
-              to="/"
-              className="font-mono text-xs text-[#15803D] hover:text-[#166534] font-medium transition-colors whitespace-nowrap shrink-0"
-            >
-              ← Hub
-            </Link>
-            <span className="text-[#1C1917]/20">|</span>
-            <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-0.5">
-              <h1 className="font-serif text-lg sm:text-xl leading-none text-[#1C1917] whitespace-nowrap shrink-0">
+          {/* Top-Left Cross-Demo Switcher + Editorial Title Pill */}
+          <div className="flex flex-wrap items-center gap-2">
+            <DemoSwitcher theme="light" className="pointer-events-auto" />
+            <div className="pointer-events-auto flex flex-wrap items-baseline gap-x-2.5 gap-y-0.5 bg-[#FAF7F2]/82 backdrop-blur-md border border-[#1C1917]/12 rounded-[4px] px-3 py-1.5 shadow-sm">
+              <h1 className="font-serif text-base sm:text-lg leading-none text-[#1C1917] whitespace-nowrap shrink-0">
                 Sunlit Pool
               </h1>
-              <span className="font-mono text-[11px] text-[#57534E] hidden sm:inline whitespace-nowrap shrink-0">
+              <span className="font-mono text-[11px] text-[#57534E] hidden md:inline whitespace-nowrap shrink-0">
                 Interactive water physics · Zero assets
               </span>
             </div>
