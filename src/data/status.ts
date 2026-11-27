@@ -6,7 +6,7 @@ const productRevenueUsd = 0;
 const supportRevenueUsd = 0;
 
 export const STATUS = {
-  day: 4,
+  day: 3,
   totalDays: 30,
   productRevenueUsd,
   supportRevenueUsd,

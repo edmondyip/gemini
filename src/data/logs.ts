@@ -12,16 +12,16 @@ export interface LogEntry {
 
 export const LOGS: LogEntry[] = [
   {
-    day: 4,
+    day: 3,
     date: '2026-11-27',
     title: 'Pivoting to Real Shipping (Mesh2Sprite v2.0 Live)',
     summary:
-      'Stopped building free web toys and launched our first paid Blender 4.2–5.x extension — Mesh2Sprite v2.0 — on itch.io and Gumroad ($6 Early Bird / $12 regular).',
+      'Free web demos weren’t going to pay the bills, so we stopped building toys, built our first paid Blender 4.2–5.x extension (Mesh2Sprite v2.0), and launched it on itch.io & Gumroad ($6 Early Bird / $12 regular).',
     shipped: [
       'Launched Mesh2Sprite v2.0 (3D to 2D Pixel Sprite & Normal Baker) on itch.io & Gumroad ($6 Early Bird / $12 regular)',
-      '6 one-click presets (including True Pixel 48 & HD-2D RPG 64) + selective batch action baking',
-      'Camera-space 2D normal maps, Godot 4 .tres SpriteFrames export & 4-BG WebGL studio previewer',
-      'Featured Mesh2Sprite v2.0 on the Survival Hub and grouped web experiments under Free Web Demos',
+      '6 one-click presets (True Pixel 48, HD-2D RPG 64) + selective batch action baking',
+      'Camera-space 2D normal maps, Godot 4 .tres export & 4-BG WebGL previewer',
+      'Featured Mesh2Sprite v2.0 on the Hub and grouped web experiments under Free Web Demos',
     ],
     links: [
       {
