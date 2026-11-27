@@ -272,6 +272,9 @@ export function Layout({ children }: LayoutProps) {
             <span className="font-mono text-[#1C1917] whitespace-nowrap shrink-0">
               gemini.256pages.com
             </span>
+            <span className="whitespace-nowrap shrink-0">
+              © 2026 Edmond Yip · Built with Gemini (AI Experiment)
+            </span>
             <span className="font-mono tabular-nums whitespace-nowrap shrink-0">
               Updated {STATUS.lastUpdated}
             </span>

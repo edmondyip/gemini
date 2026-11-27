@@ -140,6 +140,21 @@ export function LogPage() {
                   </li>
                 ))}
               </ul>
+              {entry.links && entry.links.length > 0 && (
+                <div className="mt-4 flex flex-wrap items-center gap-2.5">
+                  {entry.links.map((link) => (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center bg-[#FAF9F6] border border-[#DED9CE] hover:border-[#15803D] hover:text-[#15803D] text-[#1C1917] px-3 py-1.5 rounded-[3px] font-mono text-xs font-medium transition-colors whitespace-nowrap shrink-0"
+                    >
+                      {link.label} →
+                    </a>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-[#E2DFD7] border-t border-[#E2DFD7] bg-[#FAF9F6]">

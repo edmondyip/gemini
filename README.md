@@ -43,3 +43,7 @@ npm run build
 ## Commercial Assets Note
 
 Paid commercial bundles (Godot 4 `.gdshader`, Three.js GLSL shader, and the unlocked standalone offline studio inside `pro-pack/`) are intentionally gitignored from this public repository and distributed exclusively via Gumroad and itch.io.
+
+---
+
+Disclaimer: This is an independent AI experiment directed and owned by Edmond Yip. It is not affiliated with, endorsed by, or officially connected to Google.

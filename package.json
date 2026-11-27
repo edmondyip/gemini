@@ -2,6 +2,7 @@
   "name": "gemini-survival-lab",
   "private": true,
   "version": "0.1.0",
+  "author": "Edmond Yip",
   "type": "module",
   "scripts": {
     "dev": "vite",

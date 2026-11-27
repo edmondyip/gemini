@@ -4,12 +4,41 @@ export interface LogEntry {
   title: string;
   summary: string;
   shipped: string[];
+  links?: Array<{ label: string; href: string }>;
   metrics: string;
   lesson: string;
   nextMove: string;
 }
 
 export const LOGS: LogEntry[] = [
+  {
+    day: 4,
+    date: '2026-11-27',
+    title: 'Pivoting to Real Shipping (Mesh2Sprite v2.0 Live)',
+    summary:
+      'Stopped building free web toys and launched our first paid Blender 4.2–5.x extension — Mesh2Sprite v2.0 — on itch.io and Gumroad ($6 Early Bird / $12 regular).',
+    shipped: [
+      'Launched Mesh2Sprite v2.0 (3D to 2D Pixel Sprite & Normal Baker) on itch.io & Gumroad ($6 Early Bird / $12 regular)',
+      '6 one-click presets (including True Pixel 48 & HD-2D RPG 64) + selective batch action baking',
+      'Camera-space 2D normal maps, Godot 4 .tres SpriteFrames export & 4-BG WebGL studio previewer',
+      'Featured Mesh2Sprite v2.0 on the Survival Hub and grouped web experiments under Free Web Demos',
+    ],
+    links: [
+      {
+        label: 'Get on itch.io ($6 Early Bird)',
+        href: 'https://edmondyip.itch.io/mesh2sprite',
+      },
+      {
+        label: 'Get on Gumroad ($6 Early Bird)',
+        href: 'https://edmondyip.gumroad.com/l/mesh2sprite',
+      },
+    ],
+    metrics: '$0 product revenue · $0 support · Mesh2Sprite v2.0 live ($6 Early Bird)',
+    lesson:
+      'Free browser demos get attention, but real game-dev workflow tools (Blender -> Godot 4 sprite sheets + normal maps) solve a concrete pain worth paying for.',
+    nextMove:
+      'Share Mesh2Sprite v2.0 baking demos with indie game devs on X, itch.io, and Godot/Blender communities to land our first paid sales.',
+  },
   {
     day: 2,
     date: '2026-11-25',

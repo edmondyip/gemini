@@ -327,8 +327,193 @@ export function HomePage() {
         </p>
       </section>
 
-      {/* 2. Flagship Interactive Water Physics — Sunlit Pool */}
-      <section aria-labelledby="sunlit-pool-showcase-title">
+      {/* 2. Featured Paid Product — Mesh2Sprite v2.0 */}
+      <section aria-labelledby="mesh2sprite-featured-title">
+        <div className="bg-white border-2 border-[#15803D] rounded-[3px] grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
+          <div className="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-[#DED9CE]">
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="bg-[#15803D] text-white font-mono text-xs font-medium px-2 py-0.5 rounded-[3px] whitespace-nowrap shrink-0">
+                  FEATURED PRODUCT
+                </span>
+                <span className="font-mono text-xs font-medium text-[#15803D] whitespace-nowrap shrink-0">
+                  BLENDER 4.2–5.X ADD-ON
+                </span>
+              </div>
+              <h2
+                id="mesh2sprite-featured-title"
+                className="font-serif text-3xl sm:text-4xl text-[#1C1917] mt-3 leading-tight text-balance"
+              >
+                Mesh2Sprite v2.0
+              </h2>
+              <p className="font-mono text-xs sm:text-sm text-[#57534E] mt-1">
+                3D to 2D Pixel Sprite &amp; Normal Baker
+              </p>
+              <ul className="mt-5 space-y-2.5 text-base text-[#57534E]">
+                <li className="flex items-start gap-2.5">
+                  <span className="font-mono text-sm text-[#15803D] mt-0.5 shrink-0">
+                    +
+                  </span>
+                  <span>
+                    6 one-click presets (including{' '}
+                    <code className="font-mono text-sm text-[#1C1917]">
+                      True Pixel 48
+                    </code>{' '}
+                    &amp;{' '}
+                    <code className="font-mono text-sm text-[#1C1917]">
+                      HD-2D RPG 64
+                    </code>
+                    )
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="font-mono text-sm text-[#15803D] mt-0.5 shrink-0">
+                    +
+                  </span>
+                  <span>
+                    Selective batch action baking &amp; camera-space 2D normal
+                    maps
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="font-mono text-sm text-[#15803D] mt-0.5 shrink-0">
+                    +
+                  </span>
+                  <span>
+                    Godot 4{' '}
+                    <code className="font-mono text-sm text-[#1C1917]">
+                      .tres
+                    </code>{' '}
+                    export &amp; 4-BG WebGL studio previewer
+                  </span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="mt-8 space-y-3">
+              <div className="flex flex-wrap items-center gap-3">
+                <a
+                  href={STATUS.buyLinks.mesh2spriteItch}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() =>
+                    trackEvent('click_mesh2sprite', {
+                      platform: 'itch',
+                      location: 'home_featured',
+                    })
+                  }
+                  className="inline-flex items-center justify-center bg-[#15803D] hover:bg-[#166534] text-white px-4 py-2.5 rounded-[3px] text-sm font-medium transition-colors whitespace-nowrap shrink-0"
+                >
+                  Get on itch.io ($6 Early Bird)
+                </a>
+                <a
+                  href={STATUS.buyLinks.mesh2spriteGumroad}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() =>
+                    trackEvent('click_mesh2sprite', {
+                      platform: 'gumroad',
+                      location: 'home_featured',
+                    })
+                  }
+                  className="inline-flex items-center justify-center bg-white border border-[#DED9CE] hover:border-[#15803D] hover:text-[#15803D] text-[#1C1917] px-4 py-2.5 rounded-[3px] text-sm font-medium transition-colors whitespace-nowrap shrink-0"
+                >
+                  Get on Gumroad ($6 Early Bird)
+                </a>
+              </div>
+              <div className="font-mono text-xs text-[#57534E]">
+                Early Bird $6 (regular $12) · Exported sprites belong 100% to
+                you
+              </div>
+            </div>
+          </div>
+
+          <div className="lg:col-span-7 bg-[#E7E3D8] p-4 sm:p-6 flex flex-col justify-between gap-4">
+            <div className="bg-[#1C1917] text-[#F7F5F0] border border-[#DED9CE] rounded-[3px] p-5 sm:p-6 flex flex-col justify-between gap-5 h-full">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
+                <span className="font-mono text-xs uppercase tracking-wider text-emerald-400">
+                  BLENDER 4.2 – 5.X PIPELINE
+                </span>
+                <span className="font-mono text-xs text-stone-400">
+                  SINGLE ZIP · DRAG &amp; DROP INSTALL
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 font-mono text-xs">
+                <div className="bg-white/5 border border-white/10 rounded-[3px] p-3">
+                  <div className="text-stone-400 uppercase mb-1">
+                    Quick Presets (6)
+                  </div>
+                  <div className="text-white">True Pixel 48 · HD-2D RPG 64</div>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-[3px] p-3">
+                  <div className="text-stone-400 uppercase mb-1">
+                    Batch Baking
+                  </div>
+                  <div className="text-white">
+                    Selective Actions + Action Slots
+                  </div>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-[3px] p-3">
+                  <div className="text-stone-400 uppercase mb-1">
+                    Engine Exports
+                  </div>
+                  <div className="text-white">
+                    Albedo PNG + Normal Map + Godot 4 .tres
+                  </div>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-[3px] p-3">
+                  <div className="text-stone-400 uppercase mb-1">
+                    Studio Previewer
+                  </div>
+                  <div className="text-white">
+                    4-BG WebGL + Live 2D Normal Lighting
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-1 font-mono text-xs text-stone-400">
+                <span>*_albedo.png · *_normal.png · *_godot.tres</span>
+                <span className="text-emerald-400">v2.0.2 READY</span>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-2 font-mono text-xs text-[#1C1917]">
+                <span className="px-2.5 py-1 bg-white border border-[#DED9CE] rounded-[3px]">
+                  6 Presets
+                </span>
+                <span className="px-2.5 py-1 bg-white border border-[#DED9CE] rounded-[3px]">
+                  2D Normals
+                </span>
+                <span className="px-2.5 py-1 bg-white border border-[#DED9CE] rounded-[3px]">
+                  Godot 4 .tres
+                </span>
+              </div>
+              <span className="font-mono text-sm text-[#57534E] whitespace-nowrap shrink-0">
+                FIRST PAID PRODUCT · $6 EARLY BIRD
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. Free Web Demos */}
+      <section aria-labelledby="free-web-demos-title" className="space-y-8">
+        <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-[#DED9CE] pb-2">
+          <h2
+            id="free-web-demos-title"
+            className="font-mono text-sm uppercase tracking-wider text-[#57534E]"
+          >
+            FREE WEB DEMOS
+          </h2>
+          <span className="font-mono text-xs text-[#57534E]">
+            ZERO-ASSET BROWSER EXPERIMENTS
+          </span>
+        </div>
+
+      {/* Demo 03 — Sunlit Pool */}
+      <div aria-labelledby="sunlit-pool-showcase-title">
         <div className="bg-white border border-[#DED9CE] rounded-[3px] grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
           <div className="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-[#DED9CE]">
             <div>
@@ -431,10 +616,10 @@ export function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* 2. Flagship 3D Showcase — Neon Rain · Hong Kong */}
-      <section aria-labelledby="neon-rain-showcase-title">
+      {/* Demo 02 — Neon Rain · Hong Kong */}
+      <div aria-labelledby="neon-rain-showcase-title">
         <div className="bg-white border border-[#DED9CE] rounded-[3px] grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
           <div className="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-[#DED9CE]">
             <div>
@@ -553,10 +738,10 @@ export function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* 2. Featured Tool #1 — Full-Width Split Showcase */}
-      <section aria-labelledby="featured-tool-title">
+      {/* Demo 01 — Dither & CRT Lab */}
+      <div aria-labelledby="featured-tool-title">
         <div className="bg-white border border-[#DED9CE] rounded-[3px] grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
           {/* Left: Info + Actions */}
           <div className="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-[#DED9CE]">
@@ -687,9 +872,10 @@ export function HomePage() {
             </div>
           </div>
         </div>
+      </div>
       </section>
 
-      {/* 3. Latest Field Dispatch & Transparent Public Ledger */}
+      {/* 4. Latest Field Dispatch & Transparent Public Ledger */}
       <section aria-labelledby="latest-dispatch-title">
         <div className="bg-white border border-[#E2DFD7] rounded-[3px] overflow-hidden">
           <div className="p-5 sm:p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
